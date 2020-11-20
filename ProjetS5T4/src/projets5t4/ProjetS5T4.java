@@ -30,6 +30,10 @@ public class ProjetS5T4 {
         // TODO code application logic here
 
         PanelProfil calendrier = new PanelProfil();
+        
+        Event rdv = new Event(LocalTime.of(10, 0), "Doc", "Reason", "mardi 17 novembre 2020");
+        
+        calendrier.displayEvent(rdv);
     }
 
 }

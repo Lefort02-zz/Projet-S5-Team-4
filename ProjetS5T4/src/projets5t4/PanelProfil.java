@@ -15,9 +15,9 @@ import java.time.*;
 import java.util.GregorianCalendar;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import java.awt.Container;
 import java.awt.Insets;
 import java.awt.Dimension;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -40,6 +40,10 @@ public class PanelProfil extends JFrame {
     private String[] days = new String[5];
     String[][] event = new String[time.length / 2 + 2][];
 
+    private LocalTime eventTime;
+    private String eventReason, eventDoc;
+    private String eventDate;
+
     private Calendar calendar = Calendar.getInstance();
 
     public PanelProfil() {
@@ -56,6 +60,7 @@ public class PanelProfil extends JFrame {
         buildPanel();
 
         add(panel);
+
         // Display the window.
         setVisible(true);
     }
@@ -123,8 +128,9 @@ public class PanelProfil extends JFrame {
         tab.setBounds(320 + insets.left, 90 + insets.top, size.width, size.height);
         hours.setBounds(285 + insets.left, 95 + insets.top, size.width, size.height);
 
-        panel.setBackground(Color.white);
+        colorActualDay();
 
+        panel.setBackground(Color.white);
     }
 
     public void setNextWeek() {
@@ -145,6 +151,7 @@ public class PanelProfil extends JFrame {
         model.fireTableDataChanged();
 
         tableau.setModel(model);
+
     }
 
     public void setPreviousWeek() {
@@ -165,11 +172,12 @@ public class PanelProfil extends JFrame {
         model.fireTableDataChanged();
 
         tableau.setModel(model);
+
     }
 
     public void setActualWeek() {
         SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
-        
+
         calendar = Calendar.getInstance();
 
         int delta = -calendar.get(GregorianCalendar.DAY_OF_WEEK) + 2;
@@ -180,12 +188,84 @@ public class PanelProfil extends JFrame {
             days[i] = format.format(calendar.getTime());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
-        
+
         model = new DefaultTableModel(event, days);
 
         model.fireTableDataChanged();
 
         tableau.setModel(model);
+
+    }
+
+    public void colorActualDay() {
+
+        String date;
+        SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
+
+        calendar = Calendar.getInstance();
+
+        date = format.format(calendar.getTime());
+
+        calendar.add(Calendar.DATE, 0);
+
+        TableColumnModel column = tableau.getColumnModel();
+
+        for (int i = 0; i < days.length; ++i) {
+            if (date.equals(days[i])) {
+                column.getColumn(i).setCellRenderer(new ColumnColorRenderer(Color.lightGray));
+            }
+        }
+    }
+
+    public void displayEvent(Event rdv) {
+        
+        eventTime = rdv.getHours();
+        eventDate = rdv.getDate();
+        eventDoc = rdv.getDoctor();
+        eventReason = rdv.getReason();
+
+        int posx = 0, posy = 0;
+
+        int tempHour = eventTime.getHour();
+
+        for (int i = 0; i < time.length; ++i) {
+
+            for (int j = 0; j < days.length; ++j) {
+
+                if (time[i].getHour() == tempHour) {
+
+                    posx = i;
+                }
+
+                if (days[j].equals(endDay)) {
+
+                    posx = j;
+                }
+                model.setValueAt(eventDoc, posx, posy);
+            }
+        }
+
+        System.out.println(posx);
+        System.out.println(posy);
+
+    }
+
+    public class ColumnColorRenderer extends DefaultTableCellRenderer {
+
+        Color backgroundColor, foregroundColor;
+
+        public ColumnColorRenderer(Color backgroundColor) {
+            super();
+            this.backgroundColor = backgroundColor;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            cell.setBackground(backgroundColor);
+            cell.setForeground(foregroundColor);
+            return cell;
+        }
     }
 
     private class ButtonListener implements ActionListener {
