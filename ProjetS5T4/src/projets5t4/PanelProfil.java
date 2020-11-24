@@ -35,23 +35,22 @@ public class PanelProfil extends JFrame {
 
     private final LocalTime startDay = LocalTime.of(8, 0);
     private final LocalTime endDay = LocalTime.of(19, 0);
-    private final LocalTime[] time = new LocalTime[19];
+    private final LocalTime[] time = new LocalTime[12];
+    private double numSécuPatient;
 
     private String[] days = new String[5];
-    String[][] event = new String[time.length / 2 + 2][];
+    String[][] event = new String[time.length - 1][];
 
     private LocalTime eventTime;
-    private String eventReason, eventDoc;
-    private String eventDate;
+    private String eventDate, eventDisplay;
 
     private Calendar calendar = Calendar.getInstance();
 
     public PanelProfil() {
         // Set the window title.
         setTitle("Profil");
-
-        // Set the size of the window.
-        setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         // Specify what happens when the close button is clicked.
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,7 +78,7 @@ public class PanelProfil extends JFrame {
 
         calendar.add(Calendar.DAY_OF_MONTH, delta);
 
-        for (int i = 0; i <= 11; ++i) {
+        for (int i = 0; i < 12; ++i) {
             time[i] = startDay.plusHours(i);
         }
 
@@ -98,6 +97,8 @@ public class PanelProfil extends JFrame {
 
         model = new DefaultTableModel(event, days);
         tableau = new JTable(model);
+
+        tableau.setDefaultEditor(Object.class, null);
 
         tableau.setRowHeight(30);
         TableColumnModel column = tableau.getColumnModel();
@@ -128,9 +129,9 @@ public class PanelProfil extends JFrame {
         tab.setBounds(320 + insets.left, 90 + insets.top, size.width, size.height);
         hours.setBounds(285 + insets.left, 95 + insets.top, size.width, size.height);
 
-        colorActualDay();
-
         panel.setBackground(Color.white);
+        colorActualDay();
+        displayEvent();
     }
 
     public void setNextWeek() {
@@ -217,37 +218,47 @@ public class PanelProfil extends JFrame {
         }
     }
 
-    public void displayEvent(Event rdv) {
-        
-        eventTime = rdv.getHours();
-        eventDate = rdv.getDate();
-        eventDoc = rdv.getDoctor();
-        eventReason = rdv.getReason();
+    public void displayEvent() {
 
-        int posx = 0, posy = 0;
+        SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
 
-        int tempHour = eventTime.getHour();
+        DAO<Event> eventDAO = new EventDAO(SQL.getInstance());
+        DAO<Docteur> docteurDAO = new DocteurDAO(SQL.getInstance());
+
+        numSécuPatient = 1555;
+        Event rdv = eventDAO.find(numSécuPatient);
+        Docteur docteur = docteurDAO.find(rdv.getNumSecuDocteur());
+
+        int posx, posy;
+
+        int tempHour = rdv.getHours().getHour();
+
+        eventDate = format.format(rdv.getDate());
+        eventDisplay = "RDV with: " + docteur.getNomDoc() + " " + docteur.getPrenomDoc();
+
+        System.out.println(eventDate);
+        System.out.println(eventDisplay);
 
         for (int i = 0; i < time.length; ++i) {
 
             for (int j = 0; j < days.length; ++j) {
 
-                if (time[i].getHour() == tempHour) {
+                if (time[i].getHour() == tempHour && days[j].equals(eventDate)) {
 
                     posx = i;
+                    posy = j;
+
+                    System.out.println(posx);
+                    System.out.println(posy);
+
+                    model.setValueAt(eventDisplay, posx, posy);
+
+                    tableau.getColumnModel().getColumn(posx).setCellRenderer(new StatusColumnCellRenderer());
                 }
 
-                if (days[j].equals(endDay)) {
-
-                    posx = j;
-                }
-                model.setValueAt(eventDoc, posx, posy);
             }
         }
-
-        System.out.println(posx);
-        System.out.println(posy);
-
+        
     }
 
     public class ColumnColorRenderer extends DefaultTableCellRenderer {
@@ -265,6 +276,23 @@ public class PanelProfil extends JFrame {
             cell.setBackground(backgroundColor);
             cell.setForeground(foregroundColor);
             return cell;
+        }
+    }
+
+    public class StatusColumnCellRenderer extends DefaultTableCellRenderer {
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+
+            //Cells are by default rendered as a JLabel.
+            JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+
+ 
+                l.setBackground(Color.GREEN);
+            
+            //Return the JLabel which renders the cell.
+            return l;
+
         }
     }
 

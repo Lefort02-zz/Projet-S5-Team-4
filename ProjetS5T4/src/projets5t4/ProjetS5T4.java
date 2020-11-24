@@ -5,18 +5,6 @@
  */
 package projets5t4;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.temporal.TemporalField;
-import java.time.temporal.WeekFields;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-
 /**
  *
  * @author Gaspard Lefort-Louet
@@ -30,10 +18,25 @@ public class ProjetS5T4 {
         // TODO code application logic here
 
         PanelProfil calendrier = new PanelProfil();
+
+       /* DAO<Patient> patientDAO = new PatientDAO(SQL.getInstance());
+        DAO<Docteur> docteurDAO = new DocteurDAO(SQL.getInstance());
+        DAO<Event> eventDAO = new EventDAO(SQL.getInstance());
         
-        Event rdv = new Event(LocalTime.of(10, 0), "Doc", "Reason", "mardi 17 novembre 2020");
         
-        calendrier.displayEvent(rdv);
+            Patient patient = patientDAO.find(1111);
+            System.out.println("Num sécu: " + patient.getNumSecuPatient()+ "  nom: " + patient.getNomPatient()+ " prénom: " + patient.getPrenomPatient()+ " age: " + patient.getAge()+ " antécédents: " + patient.getAntecedent()
+            
+            + " password: " + patient.getPassword());
+            
+            Docteur docteur = docteurDAO.find(2222);
+            System.out.println("Num sécu: " + docteur.getNumSecuDocteur()+ "  nom: " + docteur.getNomDoc()+ " prénom: " + docteur.getPrenomDoc()+ " age: " + docteur.getAge()+ " spécialité: " + docteur.getSpéDoc()
+            
+            + " password: " + docteur.getPasswordDoc());
+            
+            
+            Event rdv = eventDAO.find(1555);
+            System.out.println("Num RDV: " + rdv.getNumRDV()+ "  date: " + rdv.getDate()+ " heure: " + rdv.getHours()+ " raison: " + rdv.getReason());*/
     }
 
 }

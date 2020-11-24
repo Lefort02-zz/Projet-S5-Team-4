@@ -5,7 +5,9 @@
  */
 package projets5t4;
 
+import java.sql.Date;
 import java.time.LocalTime;
+import java.util.Calendar;
 
 /**
  *
@@ -14,14 +16,36 @@ import java.time.LocalTime;
 public class Event {
     
     private LocalTime hours;
-    private String doctor, reason;
-    private String date;
+    private String reason;
+    private Date date;
+    private double numSecuDocteur, numSecuPatient, numRDV;
 
-    public Event(LocalTime hours, String doctor, String reason, String date) {
+    public Event() {
+    }
+
+    public Event(LocalTime hours, String reason, double numRDV, Date date, double numSecuDocteur) {
         this.hours = hours;
-        this.doctor = doctor;
         this.reason = reason;
+        this.numRDV = numRDV;
         this.date = date;
+        this.numSecuDocteur = numSecuDocteur;
+        this.numSecuPatient = numSecuPatient;
+    }
+
+    public double getNumSecuDocteur() {
+        return numSecuDocteur;
+    }
+
+    public void setNumSecuDocteur(double numSecuDocteur) {
+        this.numSecuDocteur = numSecuDocteur;
+    }
+
+    public double getNumSecuPatient() {
+        return numSecuPatient;
+    }
+
+    public void setNumSecuPatient(double numSecuPatient) {
+        this.numSecuPatient = numSecuPatient;
     }
 
     public LocalTime getHours() {
@@ -32,12 +56,12 @@ public class Event {
         this.hours = hours;
     }
 
-    public String getDoctor() {
-        return doctor;
+    public double getNumRDV() {
+        return numRDV;
     }
 
-    public void setDoctor(String doctor) {
-        this.doctor = doctor;
+    public void setNumRDV(double numRDV) {
+        this.numRDV = numRDV;
     }
 
     public String getReason() {
@@ -48,11 +72,11 @@ public class Event {
         this.reason = reason;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
     
