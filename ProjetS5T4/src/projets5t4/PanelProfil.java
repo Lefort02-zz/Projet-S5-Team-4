@@ -131,7 +131,7 @@ public class PanelProfil extends JFrame {
 
         panel.setBackground(Color.white);
         colorActualDay();
-        displayEvent();
+        ///displayEvent();
     }
 
     public void setNextWeek() {
@@ -218,7 +218,7 @@ public class PanelProfil extends JFrame {
         }
     }
 
-    public void displayEvent() {
+   /* public void displayEvent() {
 
         SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
 
@@ -259,7 +259,7 @@ public class PanelProfil extends JFrame {
             }
         }
         
-    }
+    }*/
 
     public class ColumnColorRenderer extends DefaultTableCellRenderer {
 

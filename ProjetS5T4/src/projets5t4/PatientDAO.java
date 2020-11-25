@@ -5,7 +5,13 @@
  */
 package projets5t4;
 
-import java.sql.*;
+import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  *
@@ -18,15 +24,52 @@ public class PatientDAO extends DAO<Patient> {
     }
 
     @Override
-    public boolean create(Patient obj) {
+    public void create(Patient obj) {
 
-        return false;
+        try {
+
+            String sql = "INSERT INTO patient (numSécuPatient, nom, prénom, age, antécedent, mdp) VALUES (?,?,?,?,?,?)";
+            PreparedStatement statementPatient = this.connect.prepareStatement(sql);
+            statementPatient.setInt(1, obj.getInsuranceNumber());
+            statementPatient.setString(2, obj.getLastName());
+            statementPatient.setString(3, obj.getName());
+            statementPatient.setInt(4, obj.getBorn());
+            statementPatient.setString(5, obj.getAntecedent());
+            statementPatient.setString(6, obj.getPassWord());
+
+            int row = statementPatient.executeUpdate();
+            if (row > 0) {
+                System.out.println("command executed");
+            }
+
+            statementPatient.close();
+
+        } // Handle any errors that may have occurred.
+        catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("DataBase connection error");
+        }
+
     }
 
     @Override
-    public boolean delete(Patient obj) {
+    public void delete(int numSecu) {
 
-        return false;
+        try {
+
+            Statement stmt = this.connect.createStatement();
+
+            stmt.execute("DELETE FROM patient WHERE numSécuPatient =" + numSecu);
+            stmt.execute("DELETE FROM rdv WHERE numSécuPatient =" + numSecu);
+
+            stmt.close();
+
+        } // Handle any errors that may have occurred.
+        catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("DataBase connection error");
+        }
+
     }
 
     @Override
@@ -36,26 +79,32 @@ public class PatientDAO extends DAO<Patient> {
     }
 
     @Override
-    public Patient find(double numSecu) {
-        
-        Patient patient = new Patient();
+    public List<Patient> find() {
+
+        List<Patient> PatientList = new ArrayList<Patient>();
 
         try {
-            ResultSet result = this.connect.createStatement(
+            ResultSet rs = this.connect.createStatement(
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY
             ).executeQuery(
-                    "SELECT * FROM patient WHERE numSécuPatient = " + numSecu
+                    "SELECT * FROM patient"
             );
-            if (result.first()) {
-                patient = new Patient(numSecu, result.getString("nom_Patient"), result.getString("prénom_Patient"), result.getString("antécédent_Patient"), result.getString("passwordPatient"), result.getInt("age_Patient"));
+
+            while (rs.next()) {
+                Patient pat = new Patient(rs.getString(2), rs.getString(3), rs.getInt(1), rs.getInt(4), rs.getString(6), rs.getString(5));
+                PatientList.add(pat);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
-        return patient;
+
+        return PatientList;
+    }
+
+    @Override
+    public void delete(String numRdv) {
     }
 
 }

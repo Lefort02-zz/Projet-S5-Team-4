@@ -5,6 +5,7 @@
  */
 package projets5t4;
 
+import java.util.List;
 import java.sql.*;
 /**
  *
@@ -20,13 +21,15 @@ public abstract class DAO<T> {
         }
         
 
-        public abstract boolean create(T obj);
+        public abstract void create(T obj);
   
-        public abstract boolean delete(T obj);
+        public abstract void delete(int numSécu);
+        
+        public abstract void delete(String numRdv);
   
         public abstract boolean update(T obj);
 
-        public abstract T find(double id);
+        public abstract List<T> find();
         
     
 }

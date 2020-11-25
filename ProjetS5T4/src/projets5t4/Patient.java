@@ -9,73 +9,23 @@ package projets5t4;
  *
  * @author Gaspard Lefort-Louet
  */
-public class Patient {
-    
-    private double numSecuPatient;
-    private String nomPatient, prenomPatient, antecedent, password;
-    private int age;
+import java.sql.Date;
 
-    public Patient() {
+public class Patient extends Person {
+
+    private String antecedent;
+
+    public Patient(String name, String lastName, int insuranceN, int born, String passW, String ant) {
+        super(name, lastName, insuranceN, born, passW);
+        this.antecedent = ant;
     }
 
-    public Patient(double numSecuPatient, String nomPatient, String prenomPatient, String antecedent, String password, int age) {
-        this.numSecuPatient = numSecuPatient;
-        this.nomPatient = nomPatient;
-        this.prenomPatient = prenomPatient;
-        this.antecedent = antecedent;
-        this.password = password;
-        this.age = age;
-    }
-
-    
-
-    public double getNumSecuPatient() {
-        return numSecuPatient;
-    }
-
-    public void setNumSecuPatient(double numSecuPatient) {
-        this.numSecuPatient = numSecuPatient;
-    }
-
-    public String getNomPatient() {
-        return nomPatient;
-    }
-
-    public void setNomPatient(String nomPatient) {
-        this.nomPatient = nomPatient;
-    }
-
-    public String getPrenomPatient() {
-        return prenomPatient;
-    }
-
-    public void setPrenomPatient(String prenomPatient) {
-        this.prenomPatient = prenomPatient;
+    public void setAntecedent(String ant) {
+        this.antecedent += "\n" + ant;
     }
 
     public String getAntecedent() {
-        return antecedent;
+        return this.antecedent;
     }
 
-    public void setAntecedent(String antecedent) {
-        this.antecedent = antecedent;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-    
-    
 }
