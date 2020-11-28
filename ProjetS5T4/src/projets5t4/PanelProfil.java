@@ -18,6 +18,8 @@ import javax.swing.table.TableColumnModel;
 import java.awt.Insets;
 import java.awt.Dimension;
 import javax.swing.table.DefaultTableCellRenderer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -25,8 +27,6 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class PanelProfil extends JFrame {
 
-    private final int WINDOW_WIDTH = 1080;   // Window width
-    private final int WINDOW_HEIGHT = 720;  // Window height
     private JTable tableau;
     private JPanel panel;
     private JButton nextWeek, previousWeek, actualWeek;
@@ -36,20 +36,32 @@ public class PanelProfil extends JFrame {
     private final LocalTime startDay = LocalTime.of(8, 0);
     private final LocalTime endDay = LocalTime.of(19, 0);
     private final LocalTime[] time = new LocalTime[12];
-    private double numSécuPatient;
+    private int numSécuPatient = 0;
+    private int numSécuDocteur = 111;
 
     private String[] days = new String[5];
-    String[][] event = new String[time.length - 1][];
+    private String[][] event = new String[time.length - 1][];
 
-    private LocalTime eventTime;
     private String eventDate, eventDisplay;
 
     private Calendar calendar = Calendar.getInstance();
 
+    private SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
+
+    private DAO<RDV> rdvDao = new RDVDAO(SQL.getInstance());
+    private DAO<Doctor> docteurDAO = new DocteurDAO(SQL.getInstance());
+    private DAO<Patient> patientDAO = new PatientDAO(SQL.getInstance());
+
+    private List<Doctor> DoctorList = new ArrayList<>();
+    private List<Patient> PatientList = new ArrayList<>();
+    private List<RDV> RdvList = new ArrayList<>();
+
+    private int posx, posy, tempHour;
+
     public PanelProfil() {
         // Set the window title.
         setTitle("Profil");
-        
+
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         // Specify what happens when the close button is clicked.
@@ -71,8 +83,6 @@ public class PanelProfil extends JFrame {
         hours = new JList(time);
 
         hours.setFixedCellHeight(30);
-
-        SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
 
         int delta = -calendar.get(GregorianCalendar.DAY_OF_WEEK) + 2;
 
@@ -129,14 +139,16 @@ public class PanelProfil extends JFrame {
         tab.setBounds(320 + insets.left, 90 + insets.top, size.width, size.height);
         hours.setBounds(285 + insets.left, 95 + insets.top, size.width, size.height);
 
+        tableau.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 12));
+
+        
+
         panel.setBackground(Color.white);
         colorActualDay();
-        ///displayEvent();
+        displayEvent();
     }
 
     public void setNextWeek() {
-
-        SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
 
         int delta = -calendar.get(GregorianCalendar.DAY_OF_WEEK) + 2;
 
@@ -153,11 +165,11 @@ public class PanelProfil extends JFrame {
 
         tableau.setModel(model);
 
+        displayEvent();
+
     }
 
     public void setPreviousWeek() {
-
-        SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
 
         int delta = -calendar.get(GregorianCalendar.DAY_OF_WEEK) + 2;
 
@@ -173,11 +185,11 @@ public class PanelProfil extends JFrame {
         model.fireTableDataChanged();
 
         tableau.setModel(model);
+        displayEvent();
 
     }
 
     public void setActualWeek() {
-        SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
 
         calendar = Calendar.getInstance();
 
@@ -195,13 +207,13 @@ public class PanelProfil extends JFrame {
         model.fireTableDataChanged();
 
         tableau.setModel(model);
+        displayEvent();
 
     }
 
     public void colorActualDay() {
 
         String date;
-        SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
 
         calendar = Calendar.getInstance();
 
@@ -218,48 +230,55 @@ public class PanelProfil extends JFrame {
         }
     }
 
-   /* public void displayEvent() {
+    public void displayEvent() {
 
-        SimpleDateFormat format = new SimpleDateFormat("EEEE d MMMM yyyy");
+        DoctorList = docteurDAO.find();
 
-        DAO<Event> eventDAO = new EventDAO(SQL.getInstance());
-        DAO<Docteur> docteurDAO = new DocteurDAO(SQL.getInstance());
+        PatientList = patientDAO.find();
 
-        numSécuPatient = 1555;
-        Event rdv = eventDAO.find(numSécuPatient);
-        Docteur docteur = docteurDAO.find(rdv.getNumSecuDocteur());
+        RdvList = rdvDao.find();
 
-        int posx, posy;
+        for (int i = 0; i < RdvList.size(); ++i) {
+            eventDate = format.format(RdvList.get(i).getDate());
+            tempHour = RdvList.get(i).getTime().getHours();
 
-        int tempHour = rdv.getHours().getHour();
+            for (int k = 0; k < time.length; ++k) {
 
-        eventDate = format.format(rdv.getDate());
-        eventDisplay = "RDV with: " + docteur.getNomDoc() + " " + docteur.getPrenomDoc();
+                for (int j = 0; j < days.length; ++j) {
 
-        System.out.println(eventDate);
-        System.out.println(eventDisplay);
+                    if (time[k].getHour() == tempHour && days[j].equals(eventDate)) {
 
-        for (int i = 0; i < time.length; ++i) {
+                        if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) {
+                            posx = k;
+                            posy = j;
 
-            for (int j = 0; j < days.length; ++j) {
+                            eventDisplay = RdvList.get(i).getNumberRDV();
 
-                if (time[i].getHour() == tempHour && days[j].equals(eventDate)) {
+                            model.setValueAt(eventDisplay, posx, posy);
+                        }
 
-                    posx = i;
-                    posy = j;
+                        if (numSécuPatient == 0 && RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
+                            posx = k;
+                            posy = j;
 
-                    System.out.println(posx);
-                    System.out.println(posy);
+                            eventDisplay = RdvList.get(i).getNumberRDV();
 
-                    model.setValueAt(eventDisplay, posx, posy);
+                            model.setValueAt(eventDisplay, posx, posy);
+                        }
 
-                    tableau.getColumnModel().getColumn(posx).setCellRenderer(new StatusColumnCellRenderer());
+                    }
+
                 }
-
             }
         }
         
-    }*/
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        
+        for(int i=0;i<days.length;++i)
+            tableau.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+
+    }
 
     public class ColumnColorRenderer extends DefaultTableCellRenderer {
 
@@ -277,6 +296,7 @@ public class PanelProfil extends JFrame {
             cell.setForeground(foregroundColor);
             return cell;
         }
+
     }
 
     public class StatusColumnCellRenderer extends DefaultTableCellRenderer {
@@ -287,9 +307,8 @@ public class PanelProfil extends JFrame {
             //Cells are by default rendered as a JLabel.
             JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 
- 
-                l.setBackground(Color.GREEN);
-            
+            l.setBackground(Color.GREEN);
+
             //Return the JLabel which renders the cell.
             return l;
 

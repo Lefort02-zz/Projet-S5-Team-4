@@ -38,7 +38,7 @@ public class ProjetS5T4 {
             Event rdv = eventDAO.find(1555);
             System.out.println("Num RDV: " + rdv.getNumRDV()+ "  date: " + rdv.getDate()+ " heure: " + rdv.getHours()+ " raison: " + rdv.getReason());*/
         
-        DAO<RDV> rdvDAO = new RDVDAO(SQL.getInstance());
+        //DAO<RDV> rdvDAO = new RDVDAO(SQL.getInstance());
         /*rdvDAO.create(null);
         
         DAO<Doctor> docteurDAO = new DocteurDAO(SQL.getInstance());
@@ -50,7 +50,7 @@ public class ProjetS5T4 {
         patientDAO.delete(666);
         docteurDAO.delete(666);*/
         
-        rdvDAO.delete("RDV4");
+        ///rdvDAO.delete("RDV4");
     }
 
 }
