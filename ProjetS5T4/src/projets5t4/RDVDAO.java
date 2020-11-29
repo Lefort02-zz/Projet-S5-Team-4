@@ -108,7 +108,6 @@ public class RDVDAO extends DAO<RDV> {
                     }
                 }
 
-                //java.util.Date uDate = rs.getDate(4);
                 RDV rdv = new RDV(doc, pat, rs.getDate(4), rs.getTime(5), rs.getString(6), rs.getString(1));
                 RDVList.add(rdv);
             }

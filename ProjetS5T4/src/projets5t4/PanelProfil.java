@@ -17,6 +17,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.Insets;
 import java.awt.Dimension;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.Date;
+import java.sql.Time;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +62,8 @@ public class PanelProfil extends JFrame {
 
     private int posx, posy, tempHour;
 
+    private String nom, prenom, age, antecedant, informations, numRDV;
+
     public PanelProfil() {
         // Set the window title.
         setTitle("Profil");
@@ -75,6 +81,10 @@ public class PanelProfil extends JFrame {
         // Display the window.
         setVisible(true);
     }
+    
+    public PanelProfil(int i){
+        
+    }
 
     private void buildPanel() {
 
@@ -83,6 +93,7 @@ public class PanelProfil extends JFrame {
         hours = new JList(time);
 
         hours.setFixedCellHeight(30);
+        hours.setSelectionModel(new NoSelectionModel());
 
         int delta = -calendar.get(GregorianCalendar.DAY_OF_WEEK) + 2;
 
@@ -91,7 +102,7 @@ public class PanelProfil extends JFrame {
         for (int i = 0; i < 12; ++i) {
             time[i] = startDay.plusHours(i);
         }
-
+        
         for (int i = 0; i < 5; i++) {
             days[i] = format.format(calendar.getTime());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -109,6 +120,8 @@ public class PanelProfil extends JFrame {
         tableau = new JTable(model);
 
         tableau.setDefaultEditor(Object.class, null);
+        tableau.setRowSelectionAllowed(false);
+        tableau.getTableHeader().setReorderingAllowed(false);
 
         tableau.setRowHeight(30);
         TableColumnModel column = tableau.getColumnModel();
@@ -127,6 +140,34 @@ public class PanelProfil extends JFrame {
         panel.add(actualWeek);
         panel.add(hours);
 
+        actualWeek.setBackground(new java.awt.Color(102, 102, 102));
+        actualWeek.setFont(new java.awt.Font("Arial", 0, 12)); 
+        actualWeek.setForeground(new java.awt.Color(255, 255, 255));
+        actualWeek.setBorderPainted(false);
+        actualWeek.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        actualWeek.setFocusable(false);
+        actualWeek.setBounds(130, 440, 110, 30);
+
+        previousWeek.setBackground(new java.awt.Color(102, 102, 102));
+        previousWeek.setFont(new java.awt.Font("Arial", 0, 12)); 
+        previousWeek.setForeground(new java.awt.Color(255, 255, 255));
+        previousWeek.setBorderPainted(false);
+        previousWeek.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        previousWeek.setFocusable(false);
+        previousWeek.setBounds(130, 440, 110, 30);
+
+        nextWeek.setBackground(new java.awt.Color(102, 102, 102));
+        nextWeek.setFont(new java.awt.Font("Arial", 0, 12));
+        nextWeek.setForeground(new java.awt.Color(255, 255, 255));
+        nextWeek.setBorderPainted(false);
+        nextWeek.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        nextWeek.setFocusable(false);
+        nextWeek.setBounds(130, 440, 110, 30);
+
+        actualWeek.setFocusable(false);
+        nextWeek.setFocusable(false);
+        previousWeek.setFocusable(false);
+
         tab.setSize(5 * 170 - 1, 12 * 30 - 7);
 
         Insets insets = panel.getInsets();
@@ -139,13 +180,61 @@ public class PanelProfil extends JFrame {
         tab.setBounds(320 + insets.left, 90 + insets.top, size.width, size.height);
         hours.setBounds(285 + insets.left, 95 + insets.top, size.width, size.height);
 
-        tableau.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 12));
-
-        
+        tableau.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
 
         panel.setBackground(Color.white);
         colorActualDay();
         displayEvent();
+
+        tableau.addMouseListener(new Mouse());
+
+    }
+
+    public void infoPanel(int row, int col) {
+
+        int ageText;
+
+        UIManager UI = new UIManager();
+        UI.put("OptionPane.background", Color.white);
+        UI.put("Panel.background", Color.white);
+
+        String text;
+        Time heuretemp;
+        Date datetemp = null;
+
+        for (int i = 0; i < RdvList.size(); ++i) {
+
+            if (numSécuPatient == 0 && RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
+
+                if (RdvList.get(i).getNumberRDV() == tableau.getValueAt(row, col).toString()) {
+
+                    nom = RdvList.get(i).getPatient().getLastName();
+                    prenom = RdvList.get(i).getPatient().getName();
+
+                    ageText = RdvList.get(i).getPatient().getBorn();
+
+                    age = String.valueOf(ageText);
+
+                    informations = RdvList.get(i).getInformations();
+
+                    antecedant = RdvList.get(i).getPatient().getAntecedent();
+
+                    numRDV = RdvList.get(i).getNumberRDV();
+
+                    heuretemp = RdvList.get(i).getTime();
+
+                    datetemp = RdvList.get(i).getDate();
+                }
+
+            }
+        }
+
+        text = "Numéro de RDV: " + numRDV + "\nNom: " + nom + "\nPrénom: " + prenom
+                + "\nAge: " + age + "\nInformations: " + informations
+                + "\nAntécédants du patient: " + antecedant + "\nHeure: " + tempHour + "h00\n" + format.format(datetemp);
+
+        JOptionPane.showOptionDialog(null, text, "Informations sur le RDV", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+
     }
 
     public void setNextWeek() {
@@ -271,14 +360,41 @@ public class PanelProfil extends JFrame {
                 }
             }
         }
-        
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        
-        for(int i=0;i<days.length;++i)
+
+        for (int i = 0; i < days.length; ++i) {
             tableau.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
 
     }
+
+    public List<Doctor> getDoctorList() {
+        return DoctorList;
+    }
+
+    public List<Patient> getPatientList() {
+        return PatientList;
+    }
+
+    public List<RDV> getRdvList() {
+        return RdvList;
+    }
+
+    public int getNumSécuPatient() {
+        return numSécuPatient;
+    }
+
+    public int getNumSécuDocteur() {
+        return numSécuDocteur;
+    }
+
+    public JTable getTableau() {
+        return tableau;
+    }
+    
+    
 
     public class ColumnColorRenderer extends DefaultTableCellRenderer {
 
@@ -315,6 +431,25 @@ public class PanelProfil extends JFrame {
         }
     }
 
+    private static class NoSelectionModel extends DefaultListSelectionModel {
+
+        @Override
+        public void setAnchorSelectionIndex(final int anchorIndex) {
+        }
+
+        @Override
+        public void setLeadAnchorNotificationEnabled(final boolean flag) {
+        }
+
+        @Override
+        public void setLeadSelectionIndex(final int leadIndex) {
+        }
+
+        @Override
+        public void setSelectionInterval(final int index0, final int index1) {
+        }
+    }
+
     private class ButtonListener implements ActionListener {
 
         @Override
@@ -329,6 +464,43 @@ public class PanelProfil extends JFrame {
             if (e.getSource() == actualWeek) {
                 setActualWeek();
             }
+        }
+
+    }
+
+    private class Mouse implements MouseListener {
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+
+            int row = tableau.rowAtPoint(e.getPoint());
+
+            int col = tableau.columnAtPoint(e.getPoint());
+
+            //infoPanel(row, col);
+            
+            
+            
+             if (e.getClickCount() == 2) {
+                    PopupWindow popup = new PopupWindow(row, col);
+             }
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
         }
 
     }
