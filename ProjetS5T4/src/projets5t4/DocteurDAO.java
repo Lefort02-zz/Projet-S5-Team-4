@@ -28,7 +28,7 @@ public class DocteurDAO extends DAO<Doctor> {
 
         try {
 
-            String sql = "INSERT INTO docteur (numSécuDocteur, nom, prénom, age, spécialité, mdp) VALUES (?,?,?,?,?,?)";
+            String sql = "INSERT INTO docteur (numSécuDocteur, nom, prénom, age, spécialité, mdp) VALUES (?,?,?,?,?,?,?)";
             PreparedStatement statementDoctor = this.connect.prepareStatement(sql);
             statementDoctor.setInt(1, obj.getInsuranceNumber());
             statementDoctor.setString(2, obj.getLastName());
@@ -36,6 +36,7 @@ public class DocteurDAO extends DAO<Doctor> {
             statementDoctor.setInt(4, obj.getBorn());
             statementDoctor.setString(5, obj.getSpeciality());
             statementDoctor.setString(6, obj.getPassWord());
+            statementDoctor.setString(7, obj.getSexe());
 
             int row = statementDoctor.executeUpdate();
             if (row > 0) {
@@ -91,7 +92,7 @@ public class DocteurDAO extends DAO<Doctor> {
                     "SELECT * FROM docteur"
             );
             while (rs.next()) {
-                Doctor doc = new Doctor(rs.getString(2), rs.getString(3), rs.getInt(1), rs.getInt(4), rs.getString(6), rs.getString(5));
+                Doctor doc = new Doctor(rs.getString(2), rs.getString(3), rs.getInt(1), rs.getInt(4), rs.getString(6), rs.getString(5), rs.getString(7));
                 DoctorList.add(doc);
             }
 

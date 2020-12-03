@@ -19,11 +19,13 @@ import java.awt.Insets;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -40,8 +42,8 @@ public class PanelProfil extends JFrame {
     private final LocalTime startDay = LocalTime.of(8, 0);
     private final LocalTime endDay = LocalTime.of(19, 0);
     private final LocalTime[] time = new LocalTime[12];
-    private int numSécuPatient = 0;
-    private int numSécuDocteur = 111;
+    private int numSécuPatient = 666;
+    private int numSécuDocteur = 0;
 
     private String[] days = new String[5];
     private String[][] event = new String[time.length - 1][];
@@ -60,9 +62,13 @@ public class PanelProfil extends JFrame {
     private List<Patient> PatientList = new ArrayList<>();
     private List<RDV> RdvList = new ArrayList<>();
 
-    private int posx, posy, tempHour;
+    private int posx, posy, tempHour, row, col;
 
-    private String nom, prenom, age, antecedant, informations, numRDV;
+    private JPanel panelInfo;
+    private JLabel LnumRdv, Lnom, Lprenom, Lage, Lantecedent, Linfo, Ldate, Lheure, Lsexe;
+    private JLabel numRdv, nom, prenom, age, antecedent, info, date, heure, sexe;
+    private JButton deleteRdv;
+    private JFrame frame;
 
     public PanelProfil() {
         // Set the window title.
@@ -81,10 +87,6 @@ public class PanelProfil extends JFrame {
         // Display the window.
         setVisible(true);
     }
-    
-    public PanelProfil(int i){
-        
-    }
 
     private void buildPanel() {
 
@@ -102,7 +104,7 @@ public class PanelProfil extends JFrame {
         for (int i = 0; i < 12; ++i) {
             time[i] = startDay.plusHours(i);
         }
-        
+
         for (int i = 0; i < 5; i++) {
             days[i] = format.format(calendar.getTime());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -141,7 +143,7 @@ public class PanelProfil extends JFrame {
         panel.add(hours);
 
         actualWeek.setBackground(new java.awt.Color(102, 102, 102));
-        actualWeek.setFont(new java.awt.Font("Arial", 0, 12)); 
+        actualWeek.setFont(new java.awt.Font("Arial", 0, 12));
         actualWeek.setForeground(new java.awt.Color(255, 255, 255));
         actualWeek.setBorderPainted(false);
         actualWeek.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -149,7 +151,7 @@ public class PanelProfil extends JFrame {
         actualWeek.setBounds(130, 440, 110, 30);
 
         previousWeek.setBackground(new java.awt.Color(102, 102, 102));
-        previousWeek.setFont(new java.awt.Font("Arial", 0, 12)); 
+        previousWeek.setFont(new java.awt.Font("Arial", 0, 12));
         previousWeek.setForeground(new java.awt.Color(255, 255, 255));
         previousWeek.setBorderPainted(false);
         previousWeek.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -172,19 +174,20 @@ public class PanelProfil extends JFrame {
 
         Insets insets = panel.getInsets();
         Dimension size = previousWeek.getPreferredSize();
-        previousWeek.setBounds(620 + insets.left, 40 + insets.top, size.width, size.height);
-        nextWeek.setBounds(760 + insets.left, 40 + insets.top, size.width, size.height);
-        actualWeek.setBounds(685 + insets.left, 450 + insets.top, size.width, size.height);
+        previousWeek.setBounds(830 + insets.left, 250 + insets.top, size.width, size.height);
+        nextWeek.setBounds(960 + insets.left, 250 + insets.top, size.width, size.height);
+        actualWeek.setBounds(900 + insets.left, 675 + insets.top, size.width, size.height);
 
         size = tab.getSize();
-        tab.setBounds(320 + insets.left, 90 + insets.top, size.width, size.height);
-        hours.setBounds(285 + insets.left, 95 + insets.top, size.width, size.height);
+        tab.setBounds(540 + insets.left, 300 + insets.top, size.width, size.height);
+        hours.setBounds(500 + insets.left, 305 + insets.top, size.width, size.height);
 
         tableau.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
 
         panel.setBackground(Color.white);
         colorActualDay();
         displayEvent();
+        displayWelcome();
 
         tableau.addMouseListener(new Mouse());
 
@@ -192,48 +195,187 @@ public class PanelProfil extends JFrame {
 
     public void infoPanel(int row, int col) {
 
+        frame = new JFrame("Information sur votre rendez-vous");
+        frame.setSize(600, 500);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+        JPanel panelInfo = new JPanel();
+        panelInfo.setLayout(null);
+
         int ageText;
-
-        UIManager UI = new UIManager();
-        UI.put("OptionPane.background", Color.white);
-        UI.put("Panel.background", Color.white);
-
-        String text;
         Time heuretemp;
         Date datetemp = null;
 
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/trash.png"));
+        deleteRdv = new JButton("Supprimerndez-vous");
+
+        panelInfo.add(deleteRdv);
+
+        Insets insetsB = panelInfo.getInsets();
+        Dimension sizeB = deleteRdv.getPreferredSize();
+        deleteRdv.setBounds(400 + insetsB.left, 10 + insetsB.top, sizeB.width, sizeB.height);
+        //deleteRdv.setSize(15, 20);
+        deleteRdv.setFocusable(false);
+
+        deleteRdv.addActionListener(new ButtonListener());
+
+        setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
+
+        LnumRdv = new JLabel("Numéro de rendez-vous: ");
+        Lnom = new JLabel("Nom: ");
+        Lprenom = new JLabel("Prénom: ");
+        Lage = new JLabel("Age: ");
+        Lantecedent = new JLabel("Antécédents: ");
+        Linfo = new JLabel("Informations: ");
+        Ldate = new JLabel("Date: ");
+        Lheure = new JLabel("Heure: ");
+        Lsexe = new JLabel("Sexe: ");
+
+        panelInfo.add(LnumRdv);
+        panelInfo.add(Lnom);
+        panelInfo.add(Lprenom);
+        panelInfo.add(Lage);
+        panelInfo.add(Lsexe);
+        panelInfo.add(Lantecedent);
+        panelInfo.add(Linfo);
+        panelInfo.add(Ldate);
+        panelInfo.add(Lheure);
+
+        panelInfo.setBackground(Color.WHITE);
+
+        Insets insetsI = panelInfo.getInsets();
+        Dimension size = LnumRdv.getPreferredSize();
+        LnumRdv.setBounds(65 + insetsI.left, 100 + insetsI.top, size.width, size.height);
+        Lnom.setBounds(65 + insetsI.left, 120 + insetsI.top, size.width, size.height);
+        Lprenom.setBounds(65 + insetsI.left, 140 + insetsI.top, size.width, size.height);
+        Lage.setBounds(65 + insetsI.left, 160 + insetsI.top, size.width, size.height);
+        Lsexe.setBounds(65 + insetsI.left, 180 + insetsI.top, size.width, size.height);
+        Lantecedent.setBounds(65 + insetsI.left, 200 + insetsI.top, size.width, size.height);
+        Linfo.setBounds(65 + insetsI.left, 220 + insetsI.top, size.width, size.height);
+        Ldate.setBounds(65 + insetsI.left, 240 + insetsI.top, size.width, size.height);
+        Lheure.setBounds(65 + insetsI.left, 260 + insetsI.top, size.width, size.height);
+
+        numRdv = new JLabel();
+        nom = new JLabel();
+        prenom = new JLabel();
+        age = new JLabel();
+        antecedent = new JLabel();
+        info = new JLabel();
+        date = new JLabel();
+        heure = new JLabel();
+        sexe = new JLabel();
+
+        panelInfo.add(numRdv);
+        panelInfo.add(nom);
+        panelInfo.add(prenom);
+        panelInfo.add(age);
+        panelInfo.add(sexe);
+        panelInfo.add(antecedent);
+        panelInfo.add(info);
+        panelInfo.add(date);
+        panelInfo.add(heure);
+
         for (int i = 0; i < RdvList.size(); ++i) {
 
-            if (numSécuPatient == 0 && RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
+            if (numSécuPatient == 0 && RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) { //Affiche les informations si la personne connecté est un docteur
 
                 if (RdvList.get(i).getNumberRDV() == tableau.getValueAt(row, col).toString()) {
 
-                    nom = RdvList.get(i).getPatient().getLastName();
-                    prenom = RdvList.get(i).getPatient().getName();
+                    numRdv.setText(RdvList.get(i).getNumberRDV());
+
+                    nom.setText(RdvList.get(i).getPatient().getLastName());
+
+                    prenom.setText(RdvList.get(i).getPatient().getName());
 
                     ageText = RdvList.get(i).getPatient().getBorn();
 
-                    age = String.valueOf(ageText);
+                    age.setText(String.valueOf(ageText));
 
-                    informations = RdvList.get(i).getInformations();
+                    sexe.setText(RdvList.get(i).getPatient().getSexe());
 
-                    antecedant = RdvList.get(i).getPatient().getAntecedent();
+                    info.setText(RdvList.get(i).getInformations());
 
-                    numRDV = RdvList.get(i).getNumberRDV();
-
-                    heuretemp = RdvList.get(i).getTime();
+                    antecedent.setText(RdvList.get(i).getPatient().getAntecedent());
 
                     datetemp = RdvList.get(i).getDate();
+                    date.setText(format.format(datetemp));
+
+                    heuretemp = RdvList.get(i).getTime();
+                    heure.setText(heuretemp.toString());
+
+                    size = antecedent.getPreferredSize();
+                    numRdv.setFont(new Font("Arial", Font.PLAIN, 12));
+                    nom.setFont(new Font("Arial", Font.PLAIN, 12));
+                    prenom.setFont(new Font("Arial", Font.PLAIN, 12));
+                    age.setFont(new Font("Arial", Font.PLAIN, 12));
+                    antecedent.setFont(new Font("Arial", Font.PLAIN, 12));
+                    info.setFont(new Font("Arial", Font.PLAIN, 12));
+                    date.setFont(new Font("Arial", Font.PLAIN, 12));
+                    heure.setFont(new Font("Arial", Font.PLAIN, 12));
+                    sexe.setFont(new Font("Arial", Font.PLAIN, 12));
+
+                    numRdv.setBounds(350 + insetsI.left, 100 + insetsI.top, size.width, size.height);
+                    nom.setBounds(350 + insetsI.left, 120 + insetsI.top, size.width, size.height);
+                    prenom.setBounds(350 + insetsI.left, 140 + insetsI.top, size.width, size.height);
+                    age.setBounds(350 + insetsI.left, 160 + insetsI.top, size.width, size.height);
+                    sexe.setBounds(350 + insetsI.left, 180 + insetsI.top, size.width, size.height);
+                    antecedent.setBounds(350 + insetsI.left, 200 + insetsI.top, size.width, size.height);
+                    info.setBounds(350 + insetsI.left, 220 + insetsI.top, size.width, size.height);
+                    heure.setBounds(350 + insetsI.left, 260 + insetsI.top, size.width, size.height);
+                    date.setBounds(350 + insetsI.left, 240 + insetsI.top, size.width, size.height);
+
+                }
+
+            }
+
+            if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) { //Affiche les informations si la personne connecté est un patient
+
+                if (RdvList.get(i).getNumberRDV() == tableau.getValueAt(row, col).toString()) {
+
+                    numRdv.setText(RdvList.get(i).getNumberRDV());
+
+                    nom.setText(RdvList.get(i).getDoctor().getLastName());
+
+                    prenom.setText(RdvList.get(i).getDoctor().getName());
+
+                    info.setText(RdvList.get(i).getInformations());
+
+                    datetemp = RdvList.get(i).getDate();
+                    date.setText(format.format(datetemp));
+
+                    heuretemp = RdvList.get(i).getTime();
+                    heure.setText(heuretemp.toString());
+
+                    size = date.getPreferredSize();
+                    numRdv.setFont(new Font("Arial", Font.PLAIN, 12));
+                    nom.setFont(new Font("Arial", Font.PLAIN, 12));
+                    prenom.setFont(new Font("Arial", Font.PLAIN, 12));
+                    info.setFont(new Font("Arial", Font.PLAIN, 12));
+                    date.setFont(new Font("Arial", Font.PLAIN, 12));
+                    heure.setFont(new Font("Arial", Font.PLAIN, 12));
+
+                    numRdv.setBounds(350 + insetsI.left, 100 + insetsI.top, size.width, size.height);
+                    nom.setBounds(350 + insetsI.left, 120 + insetsI.top, size.width, size.height);
+                    prenom.setBounds(350 + insetsI.left, 140 + insetsI.top, size.width, size.height);
+                    info.setBounds(350 + insetsI.left, 160 + insetsI.top, size.width, size.height);
+                    heure.setBounds(350 + insetsI.left, 180 + insetsI.top, size.width, size.height);
+                    date.setBounds(350 + insetsI.left, 200 + insetsI.top, size.width, size.height);
+
+                    Lage.setVisible(false);
+                    Lsexe.setVisible(false);
+                    Lantecedent.setVisible(false);
+
+                    Linfo.setBounds(65 + insetsI.left, 160 + insetsI.top, size.width, size.height);
+                    Ldate.setBounds(65 + insetsI.left, 180 + insetsI.top, size.width, size.height);
+                    Lheure.setBounds(65 + insetsI.left, 200 + insetsI.top, size.width, size.height);
+
                 }
 
             }
         }
 
-        text = "Numéro de RDV: " + numRDV + "\nNom: " + nom + "\nPrénom: " + prenom
-                + "\nAge: " + age + "\nInformations: " + informations
-                + "\nAntécédants du patient: " + antecedant + "\nHeure: " + tempHour + "h00\n" + format.format(datetemp);
-
-        JOptionPane.showOptionDialog(null, text, "Informations sur le RDV", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+        frame.add(panelInfo);
 
     }
 
@@ -370,31 +512,35 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public List<Doctor> getDoctorList() {
-        return DoctorList;
-    }
+    public void displayWelcome() {
 
-    public List<Patient> getPatientList() {
-        return PatientList;
-    }
+        JLabel welcome = new JLabel();
 
-    public List<RDV> getRdvList() {
-        return RdvList;
-    }
+        for (int i = 0; i < RdvList.size(); ++i) {
 
-    public int getNumSécuPatient() {
-        return numSécuPatient;
-    }
+            if (numSécuPatient == 0 && RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
 
-    public int getNumSécuDocteur() {
-        return numSécuDocteur;
-    }
+                welcome.setText("Bienvenue Docteur " + RdvList.get(i).getDoctor().getName() + " " + RdvList.get(i).getDoctor().getLastName());
 
-    public JTable getTableau() {
-        return tableau;
+            }
+
+            if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) {
+
+                welcome.setText("Bienvenue " + RdvList.get(i).getPatient().getName() + " " + RdvList.get(i).getPatient().getLastName());
+
+            }
+
+        }
+
+        Insets insetsW = panel.getInsets();
+
+        welcome.setFont(new Font("Arial", Font.BOLD, 20));
+        Dimension size = welcome.getPreferredSize();
+        welcome.setBounds(800 + insetsW.left, 10 + insetsW.top, size.width, size.height);
+
+        panel.add(welcome);
+
     }
-    
-    
 
     public class ColumnColorRenderer extends DefaultTableCellRenderer {
 
@@ -464,6 +610,25 @@ public class PanelProfil extends JFrame {
             if (e.getSource() == actualWeek) {
                 setActualWeek();
             }
+            if (e.getSource() == deleteRdv) {
+                for (int i = 0; i < RdvList.size(); ++i) {
+                    if (RdvList.get(i).getNumberRDV() == tableau.getValueAt(row, col).toString()) {
+                        rdvDao.delete(tableau.getValueAt(row, col).toString());
+                        JOptionPane.showMessageDialog(null, tableau.getValueAt(row, col).toString() + " supprimée");
+                    }
+
+                }
+
+                frame.dispose();
+
+                model = new DefaultTableModel(event, days);
+
+                model.fireTableDataChanged();
+
+                tableau.setModel(model);
+                displayEvent();
+
+            }
         }
 
     }
@@ -473,17 +638,13 @@ public class PanelProfil extends JFrame {
         @Override
         public void mouseClicked(MouseEvent e) {
 
-            int row = tableau.rowAtPoint(e.getPoint());
+            row = tableau.rowAtPoint(e.getPoint());
 
-            int col = tableau.columnAtPoint(e.getPoint());
+            col = tableau.columnAtPoint(e.getPoint());
 
-            //infoPanel(row, col);
-            
-            
-            
-             if (e.getClickCount() == 2) {
-                    PopupWindow popup = new PopupWindow(row, col);
-             }
+            if (e.getClickCount() == 2) {
+                infoPanel(row, col);
+            }
 
         }
 

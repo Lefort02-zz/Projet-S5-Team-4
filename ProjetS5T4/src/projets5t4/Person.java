@@ -15,16 +15,18 @@ public abstract class Person {
 
     protected String Name;
     protected String lastName;
+    protected String sexe;
     protected int insuranceNumber;
     protected int born;
     protected String password;
 
-    public Person(String name, String lastName, int insuranceN, int born, String passW) {
+    public Person(String name, String lastName, int insuranceN, int born, String passW, String sexe) {
         this.Name = name;
         this.lastName = lastName;
         this.insuranceNumber = insuranceN;
         this.born = born;
         this.password = passW;
+        this.sexe = sexe;
     }
 
     public Person() {
@@ -61,5 +63,16 @@ public abstract class Person {
     public void setPassWord(String passW) {
         this.password = passW;
     }
+
+    public String getSexe() {
+        return sexe;
+    }
+
+    public void setSexe(String sexe) {
+        this.sexe = sexe;
+    }
+    
+    
+    
 
 }
