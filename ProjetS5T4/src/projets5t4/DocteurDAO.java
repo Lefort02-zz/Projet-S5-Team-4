@@ -28,7 +28,7 @@ public class DocteurDAO extends DAO<Doctor> {
 
         try {
 
-            String sql = "INSERT INTO docteur (numSécuDocteur, nom, prénom, age, spécialité, mdp) VALUES (?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO docteur (numSécuDocteur, nom, prénom, age, spécialité, mdp, sexe) VALUES (?,?,?,?,?,?,?)";
             PreparedStatement statementDoctor = this.connect.prepareStatement(sql);
             statementDoctor.setInt(1, obj.getInsuranceNumber());
             statementDoctor.setString(2, obj.getLastName());
