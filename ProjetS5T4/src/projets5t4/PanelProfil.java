@@ -44,8 +44,8 @@ public class PanelProfil extends JFrame {
     private final LocalTime startDay = LocalTime.of(8, 0);
     private final LocalTime endDay = LocalTime.of(19, 0);
     private final LocalTime[] time = new LocalTime[12];
-    private int numSécuPatient = 0;
-    private int numSécuDocteur = 222;
+    private int numSécuPatient = 666;
+    private int numSécuDocteur = 0;
 
     private String[] days = new String[5];
     private String[][] event = new String[time.length - 1][];
@@ -224,27 +224,26 @@ public class PanelProfil extends JFrame {
         profileMenuItem.addActionListener(new ButtonListener());
 
         /*if (numSécuPatient == 0) {
-            DefaultTableModel modelP;
-            int nbrPatient = 0;
+         DefaultTableModel modelP;
+         int nbrPatient = 0;
 
-            JTable historiquePatient = new JTable();
+         JTable historiquePatient = new JTable();
 
-            for (int i = 0; i < RdvList.size(); ++i) {
+         for (int i = 0; i < RdvList.size(); ++i) {
                 
-                if (RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
+         if (RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
                     
-                    if(RdvList.get(i).getPatient().getInsuranceNumber() == PatientList.get(i).getInsuranceNumber())
-                        nbrPatient++;
+         if(RdvList.get(i).getPatient().getInsuranceNumber() == PatientList.get(i).getInsuranceNumber())
+         nbrPatient++;
                     
-                    String[][] patient = new String[nbrPatient][4];
+         String[][] patient = new String[nbrPatient][4];
                     
-                }
-            }
+         }
+         }
 
-            modelP = new DefaultTableModel(event, days);
-            tableau = new JTable(model);
-        }*/
-
+         modelP = new DefaultTableModel(event, days);
+         tableau = new JTable(model);
+         }*/
     }
 
     public void infoPanel(int row, int col) {
@@ -570,18 +569,26 @@ public class PanelProfil extends JFrame {
 
         JLabel welcome = new JLabel();
 
-        for (int i = 0; i < RdvList.size(); ++i) {
+        if (numSécuPatient == 0) {
+            for (int i = 0; i < DoctorList.size(); ++i) {
 
-            if (numSécuPatient == 0 && RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {  //Si la personne connecté est un docteur 
+                if (DoctorList.get(i).insuranceNumber == numSécuDocteur) {  //Si la personne connecté est un docteur 
 
-                welcome.setText("Bienvenue Docteur " + RdvList.get(i).getDoctor().getName() + " " + RdvList.get(i).getDoctor().getLastName());
+                    welcome.setText("Bienvenue Docteur " + DoctorList.get(i).getName() + " " + DoctorList.get(i).getLastName());
 
+                }
             }
 
-            if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) {  //Si la personne connecté est un patient 
+        }
 
-                welcome.setText("Bienvenue " + RdvList.get(i).getPatient().getLastName() + " " + RdvList.get(i).getPatient().getName());
+        if (numSécuDocteur == 0) {
+            for (int i = 0; i < PatientList.size(); ++i) {
 
+                if (PatientList.get(i).insuranceNumber == numSécuPatient) {  //Si la personne connecté est un docteur 
+
+                    welcome.setText("Bienvenue " + PatientList.get(i).getLastName() + " " + PatientList.get(i).getName());
+
+                }
             }
 
         }
