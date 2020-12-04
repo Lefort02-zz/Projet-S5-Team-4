@@ -223,6 +223,28 @@ public class PanelProfil extends JFrame {
         profile.addActionListener(new ButtonListener());
         profileMenuItem.addActionListener(new ButtonListener());
 
+        /*if (numSécuPatient == 0) {
+            DefaultTableModel modelP;
+            int nbrPatient = 0;
+
+            JTable historiquePatient = new JTable();
+
+            for (int i = 0; i < RdvList.size(); ++i) {
+                
+                if (RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
+                    
+                    if(RdvList.get(i).getPatient().getInsuranceNumber() == PatientList.get(i).getInsuranceNumber())
+                        nbrPatient++;
+                    
+                    String[][] patient = new String[nbrPatient][4];
+                    
+                }
+            }
+
+            modelP = new DefaultTableModel(event, days);
+            tableau = new JTable(model);
+        }*/
+
     }
 
     public void infoPanel(int row, int col) {
@@ -642,7 +664,7 @@ public class PanelProfil extends JFrame {
         JPanel profilPanel = new JPanel();
         profilPanel.setLayout(null);
         profilPanel.setBackground(Color.WHITE);
-        
+
         JLabel titre = new JLabel("VOS INFORMATIONS");
         profilPanel.add(titre);
         Insets insetsTitle = profilPanel.getInsets();
@@ -894,13 +916,13 @@ public class PanelProfil extends JFrame {
                         patientDAO.delete(numSécuPatient);
 
                     }
-                    
+
                     if (numSécuPatient == 0) { //Si la personne connecté est un docteur
 
                         docteurDAO.delete(numSécuDocteur);
 
                     }
-                    
+
                     frame.dispose();
 
                 }
