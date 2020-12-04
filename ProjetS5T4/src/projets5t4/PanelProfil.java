@@ -36,7 +36,7 @@ public class PanelProfil extends JFrame {
     private final LocalTime startDay = LocalTime.of(8, 0);
     private final LocalTime endDay = LocalTime.of(19, 0);
     private final LocalTime[] time = new LocalTime[12];
-    private double numSÃ©cuPatient;
+    private double numSécuPatient;
 
     private String[] days = new String[5];
     String[][] event = new String[time.length - 1][];

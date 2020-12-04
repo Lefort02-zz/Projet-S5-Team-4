@@ -28,7 +28,7 @@ public class DocteurDAO extends DAO<Doctor> {
 
         try {
 
-            String sql = "INSERT INTO docteur (numSÃ©cuDocteur, nom, prÃ©nom, age, spÃ©cialitÃ©, mdp) VALUES (?,?,?,?,?,?)";
+            String sql = "INSERT INTO docteur (numSécuDocteur, nom, prénom, age, spécialité, mdp) VALUES (?,?,?,?,?,?)";
             PreparedStatement statementDoctor = this.connect.prepareStatement(sql);
             statementDoctor.setInt(1, obj.getInsuranceNumber());
             statementDoctor.setString(2, obj.getLastName());
@@ -47,7 +47,7 @@ public class DocteurDAO extends DAO<Doctor> {
         } // Handle any errors that may have occurred.
         catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("DataBase connection error");
+            System.out.println("DataBase connection error : docteur existe deja");
         }
 
     }
@@ -59,8 +59,8 @@ public class DocteurDAO extends DAO<Doctor> {
             
             Statement stmt = this.connect.createStatement();
             
-            stmt.execute("DELETE FROM docteur WHERE numSÃ©cuDocteur =" + numSecu);
-            stmt.execute("DELETE FROM rdv WHERE numSÃ©cuDocteur =" + numSecu);
+            stmt.execute("DELETE FROM docteur WHERE numSécuDocteur =" + numSecu);
+            stmt.execute("DELETE FROM rdv WHERE numSécuDocteur =" + numSecu);
 
             stmt.close();
 

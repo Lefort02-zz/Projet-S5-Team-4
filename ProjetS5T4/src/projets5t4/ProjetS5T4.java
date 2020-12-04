@@ -5,6 +5,9 @@
  */
 package projets5t4;
 
+import java.sql.Date;
+import java.sql.Time;
+
 /**
  *
  * @author Gaspard Lefort-Louet
@@ -38,19 +41,19 @@ public class ProjetS5T4 {
             Event rdv = eventDAO.find(1555);
             System.out.println("Num RDV: " + rdv.getNumRDV()+ "  date: " + rdv.getDate()+ " heure: " + rdv.getHours()+ " raison: " + rdv.getReason());*/
         
-        DAO<RDV> rdvDAO = new RDVDAO(SQL.getInstance());
-        /*rdvDAO.create(null);
+        
+        
+        Doctor doc1 = new Doctor("jerome","duPont",15545,58,"123456","pied");
+        
+       
         
         DAO<Doctor> docteurDAO = new DocteurDAO(SQL.getInstance());
-        docteurDAO.create(null);
+        docteurDAO.create(doc1);
         
-        DAO<Patient> patientDAO = new PatientDAO(SQL.getInstance());
-        patientDAO.create(null);
         
-        patientDAO.delete(666);
-        docteurDAO.delete(666);*/
         
-        rdvDAO.delete("RDV4");
+        
+        
     }
 
 }

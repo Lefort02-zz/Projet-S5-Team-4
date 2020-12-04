@@ -14,16 +14,16 @@ import java.sql.*;
 public abstract class DAO<T> {
     
     protected Connection connect = null;
-        
-
-        public DAO(Connection conn){
+    
+        public DAO(Connection conn)
+        {
                 this.connect = conn;
         }
         
 
         public abstract void create(T obj);
   
-        public abstract void delete(int numSÃ©cu);
+        public abstract void delete(int numSécu);
         
         public abstract void delete(String numRdv);
   
