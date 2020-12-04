@@ -19,12 +19,14 @@ import java.awt.Insets;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.font.TextAttribute;
 import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.imageio.ImageIO;
 
 /**
@@ -42,8 +44,8 @@ public class PanelProfil extends JFrame {
     private final LocalTime startDay = LocalTime.of(8, 0);
     private final LocalTime endDay = LocalTime.of(19, 0);
     private final LocalTime[] time = new LocalTime[12];
-    private int numSécuPatient = 666;
-    private int numSécuDocteur = 0;
+    private int numSécuPatient = 0;
+    private int numSécuDocteur = 111;
 
     private String[] days = new String[5];
     private String[][] event = new String[time.length - 1][];
@@ -69,6 +71,11 @@ public class PanelProfil extends JFrame {
     private JLabel numRdv, nom, prenom, age, antecedent, info, date, heure, sexe;
     private JButton deleteRdv;
     private JFrame frame;
+    private JLabel quickInfo, infosQ;
+
+    private JButton profile;
+    private JPopupMenu profileMenu;
+    private JMenuItem logoutMenuItem, profileMenuItem;
 
     public PanelProfil() {
         // Set the window title.
@@ -93,6 +100,17 @@ public class PanelProfil extends JFrame {
         panel = new JPanel();
 
         hours = new JList(time);
+
+        quickInfo = new JLabel();
+        panel.add(quickInfo);
+        Insets insetsI = panel.getInsets();
+        Dimension size = quickInfo.getPreferredSize();
+        quickInfo.setBounds(1600 + insetsI.left, 300 + insetsI.top, size.width, size.height);
+
+        infosQ = new JLabel();
+        panel.add(infosQ);
+        size = infosQ.getPreferredSize();
+        infosQ.setBounds(1600 + insetsI.left, 350 + insetsI.top, size.width, size.height);
 
         hours.setFixedCellHeight(30);
         hours.setSelectionModel(new NoSelectionModel());
@@ -173,7 +191,7 @@ public class PanelProfil extends JFrame {
         tab.setSize(5 * 170 - 1, 12 * 30 - 7);
 
         Insets insets = panel.getInsets();
-        Dimension size = previousWeek.getPreferredSize();
+        size = previousWeek.getPreferredSize();
         previousWeek.setBounds(830 + insets.left, 250 + insets.top, size.width, size.height);
         nextWeek.setBounds(960 + insets.left, 250 + insets.top, size.width, size.height);
         actualWeek.setBounds(900 + insets.left, 675 + insets.top, size.width, size.height);
@@ -191,6 +209,19 @@ public class PanelProfil extends JFrame {
 
         tableau.addMouseListener(new Mouse());
 
+        profile = new JButton("Profile");
+        size = profile.getPreferredSize();
+        profile.setBounds(15 + insets.left, 10 + insets.top, size.width, size.height);
+        panel.add(profile);
+        profile.setFocusable(false);
+
+        profileMenu = new JPopupMenu();
+        profileMenu.add(profileMenuItem = new JMenuItem("Profile"));
+        profileMenu.add("Logout");
+
+        profile.addActionListener(new ButtonListener());
+        profileMenuItem.addActionListener(new ButtonListener());
+
     }
 
     public void infoPanel(int row, int col) {
@@ -207,7 +238,7 @@ public class PanelProfil extends JFrame {
         Time heuretemp;
         Date datetemp = null;
 
-        ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/trash.png"));
+        //ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/trash.png"));
         deleteRdv = new JButton("Supprimerndez-vous");
 
         panelInfo.add(deleteRdv);
@@ -518,15 +549,15 @@ public class PanelProfil extends JFrame {
 
         for (int i = 0; i < RdvList.size(); ++i) {
 
-            if (numSécuPatient == 0 && RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
+            if (numSécuPatient == 0 && RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {  //Si la personne connecté est un docteur 
 
                 welcome.setText("Bienvenue Docteur " + RdvList.get(i).getDoctor().getName() + " " + RdvList.get(i).getDoctor().getLastName());
 
             }
 
-            if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) {
+            if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) {  //Si la personne connecté est un patient 
 
-                welcome.setText("Bienvenue " + RdvList.get(i).getPatient().getName() + " " + RdvList.get(i).getPatient().getLastName());
+                welcome.setText("Bienvenue " + RdvList.get(i).getPatient().getLastName() + " " + RdvList.get(i).getPatient().getName());
 
             }
 
@@ -536,9 +567,204 @@ public class PanelProfil extends JFrame {
 
         welcome.setFont(new Font("Arial", Font.BOLD, 20));
         Dimension size = welcome.getPreferredSize();
-        welcome.setBounds(800 + insetsW.left, 10 + insetsW.top, size.width, size.height);
+        welcome.setBounds(850 + insetsW.left, 10 + insetsW.top, size.width, size.height);
 
         panel.add(welcome);
+
+    }
+
+    public void quickInfo(int row, int col) {
+
+        String informations;
+
+        quickInfo.setText("Informations rapides sur votre rendez-vous: ");
+        Font font = quickInfo.getFont();
+        Map attributes = font.getAttributes();
+        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        quickInfo.setFont(font.deriveFont(attributes));
+
+        Insets insetsI = panel.getInsets();
+        Dimension size = quickInfo.getPreferredSize();
+        quickInfo.setBounds(1500 + insetsI.left, 300 + insetsI.top, size.width, size.height);
+
+        for (int i = 0; i < RdvList.size(); ++i) {
+
+            if (numSécuPatient == 0 && RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) { //Affiche les informations si la personne connecté est un docteur
+
+                if (RdvList.get(i).getNumberRDV() == tableau.getValueAt(row, col).toString()) {
+
+                    informations = "Vous avez rendez-vous avec " + RdvList.get(i).getPatient().getLastName() + " ";
+
+                    informations += RdvList.get(i).getPatient().getName() + ", ";
+
+                    informations += "agé de " + RdvList.get(i).getPatient().getBorn() + ", pour ";
+
+                    informations += RdvList.get(i).getInformations() + ".";
+
+                    infosQ.setText(informations);
+
+                }
+
+            }
+
+            if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) { //Affiche les informations si la personne connecté est un patient
+
+                if (RdvList.get(i).getNumberRDV() == tableau.getValueAt(row, col).toString()) {
+
+                    informations = "Vous avez rendez-vous avec le docteur " + RdvList.get(i).getDoctor().getLastName() + " ";
+
+                    informations += RdvList.get(i).getDoctor().getName() + ", ";
+
+                    informations += "pour " + RdvList.get(i).getInformations() + ".";
+
+                    infosQ.setText(informations);
+                }
+
+            }
+        }
+
+        insetsI = panel.getInsets();
+        size = infosQ.getPreferredSize();
+        infosQ.setBounds(1475 + insetsI.left, 350 + insetsI.top, size.width, size.height);
+        infosQ.setFont(new Font("Arial", Font.PLAIN, 12));
+
+    }
+
+    public void profilePopup() {
+        frame = new JFrame("Profile");
+        frame.setSize(600, 500);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+        setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
+
+        JPanel profilPanel = new JPanel();
+        profilPanel.setLayout(null);
+        profilPanel.setBackground(Color.WHITE);
+
+        Lnom = new JLabel("Nom: ");
+        Lprenom = new JLabel("Prénom: ");
+        Lage = new JLabel("Age: ");
+        Lantecedent = new JLabel("Antécédents: ");
+        Lsexe = new JLabel("Sexe: ");
+        JLabel LnumSecu = new JLabel("Numéro de sécurité social: ");
+        JLabel Lpsw = new JLabel("Mot de passe: ");
+
+        profilPanel.add(Lnom);
+        profilPanel.add(Lprenom);
+        profilPanel.add(Lage);
+        profilPanel.add(Lsexe);
+        profilPanel.add(Lantecedent);
+        profilPanel.add(LnumSecu);
+        profilPanel.add(Lpsw);
+
+        Insets insetsI = profilPanel.getInsets();
+        Dimension size = LnumSecu.getPreferredSize();
+        Lnom.setBounds(65 + insetsI.left, 120 + insetsI.top, size.width, size.height);
+        Lprenom.setBounds(65 + insetsI.left, 140 + insetsI.top, size.width, size.height);
+        Lage.setBounds(65 + insetsI.left, 160 + insetsI.top, size.width, size.height);
+        Lsexe.setBounds(65 + insetsI.left, 180 + insetsI.top, size.width, size.height);
+        Lantecedent.setBounds(65 + insetsI.left, 200 + insetsI.top, size.width, size.height);
+        LnumSecu.setBounds(65 + insetsI.left, 220 + insetsI.top, size.width, size.height);
+        Lpsw.setBounds(65 + insetsI.left, 240 + insetsI.top, size.width, size.height);
+
+        nom = new JLabel();
+        prenom = new JLabel();
+        age = new JLabel();
+        antecedent = new JLabel();
+        sexe = new JLabel();
+        JLabel numSecu = new JLabel();
+        JLabel psw = new JLabel();
+
+        nom.setFont(new Font("Arial", Font.PLAIN, 12));
+        prenom.setFont(new Font("Arial", Font.PLAIN, 12));
+        age.setFont(new Font("Arial", Font.PLAIN, 12));
+        sexe.setFont(new Font("Arial", Font.PLAIN, 12));
+        antecedent.setFont(new Font("Arial", Font.PLAIN, 12));
+        psw.setFont(new Font("Arial", Font.PLAIN, 12));
+        numSecu.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        profilPanel.add(nom);
+        profilPanel.add(prenom);
+        profilPanel.add(age);
+        profilPanel.add(sexe);
+        profilPanel.add(antecedent);
+        profilPanel.add(numSecu);
+        profilPanel.add(psw);
+
+        int ageText, numsecuText;
+
+        if (numSécuPatient == 0) { //Affiche les informations si la personne connecté est un docteur
+
+            for (int i = 0; i < DoctorList.size(); ++i) {
+
+                if (numSécuPatient == 0 && DoctorList.get(i).getInsuranceNumber() == numSécuDocteur) {
+
+                    Lantecedent.setText("Spécialité");
+
+                    ageText = DoctorList.get(i).getBorn();
+
+                    nom.setText(DoctorList.get(i).getLastName());
+                    prenom.setText(DoctorList.get(i).getName());
+                    age.setText(String.valueOf(ageText));
+                    sexe.setText(DoctorList.get(i).getSexe());
+                    antecedent.setText(DoctorList.get(i).getSpeciality());
+
+                    numsecuText = DoctorList.get(i).getInsuranceNumber();
+
+                    numSecu.setText(String.valueOf(numsecuText));
+                    psw.setText(DoctorList.get(i).getPassWord());
+
+                    size = antecedent.getPreferredSize();
+                    nom.setBounds(350 + insetsI.left, 120 + insetsI.top, size.width, size.height);
+                    prenom.setBounds(350 + insetsI.left, 140 + insetsI.top, size.width, size.height);
+                    age.setBounds(350 + insetsI.left, 160 + insetsI.top, size.width, size.height);
+                    sexe.setBounds(350 + insetsI.left, 180 + insetsI.top, size.width, size.height);
+                    antecedent.setBounds(350 + insetsI.left, 200 + insetsI.top, size.width, size.height);
+                    numSecu.setBounds(350 + insetsI.left, 220 + insetsI.top, size.width, size.height);
+                    psw.setBounds(350 + insetsI.left, 240 + insetsI.top, size.width, size.height);
+
+                }
+
+            }
+
+        }
+
+        if (numSécuDocteur == 0) { //Affiche les informations si la personne connecté est un patient
+
+            for (int i = 0; i < PatientList.size(); ++i) {
+
+                if (PatientList.get(i).getInsuranceNumber() == numSécuPatient) {
+
+                    ageText = PatientList.get(i).getBorn();
+
+                    nom.setText(PatientList.get(i).getLastName());
+                    prenom.setText(PatientList.get(i).getName());
+                    age.setText(String.valueOf(ageText));
+                    sexe.setText(PatientList.get(i).getSexe());
+                    antecedent.setText(PatientList.get(i).getAntecedent());
+
+                    numsecuText = PatientList.get(i).getInsuranceNumber();
+
+                    numSecu.setText(String.valueOf(numsecuText));
+                    psw.setText(PatientList.get(i).getPassWord());
+
+                    size = antecedent.getPreferredSize();
+
+                    nom.setBounds(350 + insetsI.left, 120 + insetsI.top, size.width, size.height);
+                    prenom.setBounds(350 + insetsI.left, 140 + insetsI.top, size.width, size.height);
+                    age.setBounds(350 + insetsI.left, 160 + insetsI.top, size.width, size.height);
+                    sexe.setBounds(350 + insetsI.left, 180 + insetsI.top, size.width, size.height);
+                    antecedent.setBounds(350 + insetsI.left, 200 + insetsI.top, size.width, size.height);
+                    numSecu.setBounds(350 + insetsI.left, 220 + insetsI.top, size.width, size.height);
+                    psw.setBounds(350 + insetsI.left, 240 + insetsI.top, size.width, size.height);
+                }
+
+            }
+
+        }
+
+        frame.add(profilPanel);
 
     }
 
@@ -629,6 +855,15 @@ public class PanelProfil extends JFrame {
                 displayEvent();
 
             }
+
+            if (e.getSource() == profile) {
+                profileMenu.show(profile, profile.getWidth() / 2, profile.getHeight() / 2);
+            }
+
+            if (e.getSource() == profileMenuItem) {
+                System.out.println("Profile popup");
+                profilePopup();
+            }
         }
 
     }
@@ -641,6 +876,10 @@ public class PanelProfil extends JFrame {
             row = tableau.rowAtPoint(e.getPoint());
 
             col = tableau.columnAtPoint(e.getPoint());
+
+            if (e.getClickCount() == 1) {
+                quickInfo(row, col);
+            }
 
             if (e.getClickCount() == 2) {
                 infoPanel(row, col);
