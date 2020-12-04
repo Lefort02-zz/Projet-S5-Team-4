@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="ProjetS5T4/src"/>
+	<classpathentry kind="lib" path="ProjetS5T4/dist/ProjetS5T4.jar"/>
+	<classpathentry kind="lib" path="ProjetS5T4/lib/mysql-connector-java-5.1.49-bin.jar"/>
+	<classpathentry kind="output" path="ProjetS5T4/build/classes"/>
+</classpath>

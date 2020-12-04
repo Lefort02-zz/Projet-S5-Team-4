@@ -78,7 +78,22 @@ public class PanelProfil extends JFrame {
     private JMenuItem logoutMenuItem, profileMenuItem;
     private JButton deleteAccount;
 
-    public PanelProfil() {
+    public PanelProfil(Person p) {
+    	
+    	
+    	if(p.getClass() == Doctor.class)
+    	{
+    		this.numSécuDocteur = p.getInsuranceNumber();
+    		this.numSécuPatient = 0;
+    	}
+    	
+    	else
+    	{
+    		this.numSécuPatient = p.getInsuranceNumber();
+    		this.numSécuDocteur = 0;
+    	}
+    	
+    	
         // Set the window title.
         setTitle("Profil");
 
@@ -570,18 +585,26 @@ public class PanelProfil extends JFrame {
 
         JLabel welcome = new JLabel();
 
-        for (int i = 0; i < RdvList.size(); ++i) {
+        if (numSécuPatient == 0) {
+            for (int i = 0; i < DoctorList.size(); ++i) {
 
-            if (numSécuPatient == 0 && RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {  //Si la personne connecté est un docteur 
+                if (DoctorList.get(i).insuranceNumber == numSécuDocteur) {  //Si la personne connecté est un docteur 
 
-                welcome.setText("Bienvenue Docteur " + RdvList.get(i).getDoctor().getName() + " " + RdvList.get(i).getDoctor().getLastName());
+                    welcome.setText("Bienvenue Docteur " + DoctorList.get(i).getName() + " " + DoctorList.get(i).getLastName());
 
+                }
             }
 
-            if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) {  //Si la personne connecté est un patient 
+        }
 
-                welcome.setText("Bienvenue " + RdvList.get(i).getPatient().getLastName() + " " + RdvList.get(i).getPatient().getName());
+        if (numSécuDocteur == 0) {
+            for (int i = 0; i < PatientList.size(); ++i) {
 
+                if (PatientList.get(i).insuranceNumber == numSécuPatient) {  //Si la personne connecté est un docteur 
+
+                    welcome.setText("Bienvenue " + PatientList.get(i).getLastName() + " " + PatientList.get(i).getName());
+
+                }
             }
 
         }
@@ -924,6 +947,8 @@ public class PanelProfil extends JFrame {
                     }
 
                     frame.dispose();
+                    new Login().setVisible(true);
+                    dispose();
 
                 }
             }
