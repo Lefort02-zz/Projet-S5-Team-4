@@ -45,7 +45,7 @@ public class PanelProfil extends JFrame {
     private final LocalTime endDay = LocalTime.of(19, 0);
     private final LocalTime[] time = new LocalTime[12];
     private int numSécuPatient = 0;
-    private int numSécuDocteur = 111;
+    private int numSécuDocteur = 222;
 
     private String[] days = new String[5];
     private String[][] event = new String[time.length - 1][];
@@ -76,6 +76,7 @@ public class PanelProfil extends JFrame {
     private JButton profile;
     private JPopupMenu profileMenu;
     private JMenuItem logoutMenuItem, profileMenuItem;
+    private JButton deleteAccount;
 
     public PanelProfil() {
         // Set the window title.
@@ -567,7 +568,7 @@ public class PanelProfil extends JFrame {
 
         welcome.setFont(new Font("Arial", Font.BOLD, 20));
         Dimension size = welcome.getPreferredSize();
-        welcome.setBounds(850 + insetsW.left, 10 + insetsW.top, size.width, size.height);
+        welcome.setBounds(800 + insetsW.left, 10 + insetsW.top, size.width, size.height);
 
         panel.add(welcome);
 
@@ -641,6 +642,22 @@ public class PanelProfil extends JFrame {
         JPanel profilPanel = new JPanel();
         profilPanel.setLayout(null);
         profilPanel.setBackground(Color.WHITE);
+        
+        JLabel titre = new JLabel("VOS INFORMATIONS");
+        profilPanel.add(titre);
+        Insets insetsTitle = profilPanel.getInsets();
+        Dimension size = titre.getPreferredSize();
+        titre.setBounds(230 + insetsTitle.left, 10 + insetsTitle.top, size.width, size.height);
+
+        deleteAccount = new JButton("SUPPRIMER VOTRE COMPTE");
+
+        profilPanel.add(deleteAccount);
+        Insets insetsD = profilPanel.getInsets();
+        size = deleteAccount.getPreferredSize();
+        deleteAccount.setBounds(200 + insetsD.left, 400 + insetsD.top, size.width, size.height);
+        deleteAccount.setFocusable(false);
+        deleteAccount.setBackground(Color.red);
+        deleteAccount.addActionListener(new ButtonListener());
 
         Lnom = new JLabel("Nom: ");
         Lprenom = new JLabel("Prénom: ");
@@ -659,7 +676,7 @@ public class PanelProfil extends JFrame {
         profilPanel.add(Lpsw);
 
         Insets insetsI = profilPanel.getInsets();
-        Dimension size = LnumSecu.getPreferredSize();
+        size = LnumSecu.getPreferredSize();
         Lnom.setBounds(65 + insetsI.left, 120 + insetsI.top, size.width, size.height);
         Lprenom.setBounds(65 + insetsI.left, 140 + insetsI.top, size.width, size.height);
         Lage.setBounds(65 + insetsI.left, 160 + insetsI.top, size.width, size.height);
@@ -704,8 +721,8 @@ public class PanelProfil extends JFrame {
 
                     ageText = DoctorList.get(i).getBorn();
 
-                    nom.setText(DoctorList.get(i).getLastName());
-                    prenom.setText(DoctorList.get(i).getName());
+                    nom.setText(DoctorList.get(i).getName());
+                    prenom.setText(DoctorList.get(i).getLastName());
                     age.setText(String.valueOf(ageText));
                     sexe.setText(DoctorList.get(i).getSexe());
                     antecedent.setText(DoctorList.get(i).getSpeciality());
@@ -715,7 +732,7 @@ public class PanelProfil extends JFrame {
                     numSecu.setText(String.valueOf(numsecuText));
                     psw.setText(DoctorList.get(i).getPassWord());
 
-                    size = antecedent.getPreferredSize();
+                    size = sexe.getPreferredSize();
                     nom.setBounds(350 + insetsI.left, 120 + insetsI.top, size.width, size.height);
                     prenom.setBounds(350 + insetsI.left, 140 + insetsI.top, size.width, size.height);
                     age.setBounds(350 + insetsI.left, 160 + insetsI.top, size.width, size.height);
@@ -738,8 +755,8 @@ public class PanelProfil extends JFrame {
 
                     ageText = PatientList.get(i).getBorn();
 
-                    nom.setText(PatientList.get(i).getLastName());
-                    prenom.setText(PatientList.get(i).getName());
+                    nom.setText(PatientList.get(i).getName());
+                    prenom.setText(PatientList.get(i).getLastName());
                     age.setText(String.valueOf(ageText));
                     sexe.setText(PatientList.get(i).getSexe());
                     antecedent.setText(PatientList.get(i).getAntecedent());
@@ -857,12 +874,36 @@ public class PanelProfil extends JFrame {
             }
 
             if (e.getSource() == profile) {
-                profileMenu.show(profile, profile.getWidth() / 2, profile.getHeight() / 2);
+                profileMenu.show(profile, profile.getWidth(), profile.getHeight() / 2);
             }
 
             if (e.getSource() == profileMenuItem) {
                 System.out.println("Profile popup");
                 profilePopup();
+            }
+
+            if (e.getSource() == deleteAccount) {
+
+                int dialogButton = JOptionPane.YES_NO_OPTION;
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimer votre conmpte ?", "Warning", dialogButton);
+
+                if (dialogResult == JOptionPane.YES_OPTION) {
+
+                    if (numSécuDocteur == 0) { //Si la personne connecté est un patient
+
+                        patientDAO.delete(numSécuPatient);
+
+                    }
+                    
+                    if (numSécuPatient == 0) { //Si la personne connecté est un docteur
+
+                        docteurDAO.delete(numSécuDocteur);
+
+                    }
+                    
+                    frame.dispose();
+
+                }
             }
         }
 
