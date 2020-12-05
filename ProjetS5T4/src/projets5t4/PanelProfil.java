@@ -79,21 +79,15 @@ public class PanelProfil extends JFrame {
     private JButton deleteAccount;
 
     public PanelProfil(Person p) {
-    	
-    	
-    	if(p.getClass() == Doctor.class)
-    	{
-    		this.numSécuDocteur = p.getInsuranceNumber();
-    		this.numSécuPatient = 0;
-    	}
-    	
-    	else
-    	{
-    		this.numSécuPatient = p.getInsuranceNumber();
-    		this.numSécuDocteur = 0;
-    	}
-    	
-    	
+
+        if (p.getClass() == Doctor.class) {
+            this.numSécuDocteur = p.getInsuranceNumber();
+            this.numSécuPatient = 0;
+        } else {
+            this.numSécuPatient = p.getInsuranceNumber();
+            this.numSécuDocteur = 0;
+        }
+
         // Set the window title.
         setTitle("Profil");
 
@@ -233,33 +227,33 @@ public class PanelProfil extends JFrame {
 
         profileMenu = new JPopupMenu();
         profileMenu.add(profileMenuItem = new JMenuItem("Profile"));
-        profileMenu.add("Logout");
+        profileMenu.add(logoutMenuItem = new JMenuItem("Logout"));
 
         profile.addActionListener(new ButtonListener());
         profileMenuItem.addActionListener(new ButtonListener());
+        logoutMenuItem.addActionListener(new ButtonListener());
 
         /*if (numSécuPatient == 0) {
-            DefaultTableModel modelP;
-            int nbrPatient = 0;
+         DefaultTableModel modelP;
+         int nbrPatient = 0;
 
-            JTable historiquePatient = new JTable();
+         JTable historiquePatient = new JTable();
 
-            for (int i = 0; i < RdvList.size(); ++i) {
+         for (int i = 0; i < RdvList.size(); ++i) {
                 
-                if (RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
+         if (RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
                     
-                    if(RdvList.get(i).getPatient().getInsuranceNumber() == PatientList.get(i).getInsuranceNumber())
-                        nbrPatient++;
+         if(RdvList.get(i).getPatient().getInsuranceNumber() == PatientList.get(i).getInsuranceNumber())
+         nbrPatient++;
                     
-                    String[][] patient = new String[nbrPatient][4];
+         String[][] patient = new String[nbrPatient][4];
                     
-                }
-            }
+         }
+         }
 
-            modelP = new DefaultTableModel(event, days);
-            tableau = new JTable(model);
-        }*/
-
+         modelP = new DefaultTableModel(event, days);
+         tableau = new JTable(model);
+         }*/
     }
 
     public void infoPanel(int row, int col) {
@@ -947,13 +941,20 @@ public class PanelProfil extends JFrame {
                     }
 
                     frame.dispose();
-                    new Login().setVisible(true);
                     dispose();
+                    
+                    
 
                 }
             }
-        }
 
+            if (e.getSource() == logoutMenuItem) {
+                dispose();
+                new Login().setVisible(true);
+
+            }
+
+        }
     }
 
     private class Mouse implements MouseListener {
