@@ -33,7 +33,7 @@ public class PanelSignUp
 	private JCheckBox sexe = new JCheckBox("If female, check it");
 	
 	
-    private class CheckBoxListener implements ItemListener
+    public class CheckBoxListener implements ItemListener
     {
     	public void itemStateChanged(ItemEvent e)
     	{
@@ -54,18 +54,18 @@ public class PanelSignUp
     		{
     			lI.setText("Speciality");
     			lI.setBounds(80, 300, 100, 30);
-    			//global.setText(tIN.getText() +"\n"+tN.getText()+"\n"+tLN.getText()+"\n"+tA.getText()+"\n"+tI.getText());
+    			System.out.println(tIN.getText() +"\n"+tN.getText()+"\n"+tLN.getText()+"\n"+tA.getText()+"\n"+tI.getText());
     		}
     		else
     		{
     			lI.setText("Antecedent(s)");
     			lI.setBounds(55, 300, 100, 30);
-    			//global.setText(tIN.getText() +"\n"+tN.getText()+"\n"+tLN.getText()+"\n"+tA.getText()+"\n"+tI.getText());
+    			System.out.println(tIN.getText() +"\n"+tN.getText()+"\n"+tLN.getText()+"\n"+tA.getText()+"\n"+tI.getText());
     		}
     	}
     }
     
-    private class ButtonListener implements ActionListener
+    public class ButtonListener implements ActionListener
     {
 	    public void  actionPerformed(ActionEvent e)
 	    {
@@ -89,12 +89,12 @@ public class PanelSignUp
 		        		patientDAO.create(new Patient(tN.getText(),tLN.getText(),Integer.parseInt(tIN.getText()),Integer.parseInt(tA.getText()),tPW.getText(),tI.getText(),sValue));
 		        	}
 		        	
-		        	Thread.sleep(3000);
-		        	global.setText("<html><body>"+ global.getText() + "Sent.<br> \nYour account is now created.</body></html>");
+		        	//Thread.sleep(3000);
+		        	System.out.println("<html><body>"+ global.getText() + "Sent.<br> \nYour account is now created.</body></html>");
 	        	}
 	        	else
 	        	{   
-	        		global.setText("<html><body>This person already exist,<br> please verify the insurance number.<html><body>");
+	        		System.out.println("<html><body>This person already exist,<br> please verify the insurance number.<html><body>");
 	        	}
 	        	
 	        	
@@ -102,7 +102,7 @@ public class PanelSignUp
 	       catch(Exception excp)
 	        {
 	        	
-	        	global.setText("<html><body>"+ global.getText() + "Please verify your entry.<br> \nInsurance Number can only be composed of numbers, same situation for the age.</body></html>");
+	    	   System.out.println("<html><body>"+ global.getText() + "Please verify your entry.<br> \nInsurance Number can only be composed of numbers, same situation for the age.</body></html>");
 	        	
 	        }
 	        

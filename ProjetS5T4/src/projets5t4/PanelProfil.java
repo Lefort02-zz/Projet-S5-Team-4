@@ -78,7 +78,16 @@ public class PanelProfil extends JFrame {
     private JMenuItem logoutMenuItem, profileMenuItem;
     private JButton deleteAccount;
 
-    public PanelProfil() {
+    public PanelProfil(Person p) {
+
+        if (p.getClass() == Doctor.class) {
+            this.numSécuDocteur = p.getInsuranceNumber();
+            this.numSécuPatient = 0;
+        } else {
+            this.numSécuPatient = p.getInsuranceNumber();
+            this.numSécuDocteur = 0;
+        }
+
         // Set the window title.
         setTitle("Profil");
 
@@ -218,10 +227,11 @@ public class PanelProfil extends JFrame {
 
         profileMenu = new JPopupMenu();
         profileMenu.add(profileMenuItem = new JMenuItem("Profile"));
-        profileMenu.add("Logout");
+        profileMenu.add(logoutMenuItem = new JMenuItem("Logout"));
 
         profile.addActionListener(new ButtonListener());
         profileMenuItem.addActionListener(new ButtonListener());
+        logoutMenuItem.addActionListener(new ButtonListener());
 
         /*if (numSécuPatient == 0) {
          DefaultTableModel modelP;
@@ -584,7 +594,7 @@ public class PanelProfil extends JFrame {
         if (numSécuDocteur == 0) {
             for (int i = 0; i < PatientList.size(); ++i) {
 
-                if (PatientList.get(i).insuranceNumber == numSécuPatient) {  //Si la personne connecté est un docteur 
+                if (PatientList.get(i).insuranceNumber == numSécuPatient) {  //Si la personne connecté est un patient 
 
                     welcome.setText("Bienvenue " + PatientList.get(i).getLastName() + " " + PatientList.get(i).getName());
 
@@ -931,11 +941,20 @@ public class PanelProfil extends JFrame {
                     }
 
                     frame.dispose();
+                    dispose();
+                    
+                    
 
                 }
             }
-        }
 
+            if (e.getSource() == logoutMenuItem) {
+                dispose();
+                new Login().setVisible(true);
+
+            }
+
+        }
     }
 
     private class Mouse implements MouseListener {
