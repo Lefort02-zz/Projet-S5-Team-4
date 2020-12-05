@@ -82,7 +82,7 @@ public class Login extends javax.swing.JFrame {
     private class ButtonListener1 implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            //jTextField_SocialNumber
+            
             try {
 
                 DAO<Doctor> docteurDAO = new DocteurDAO(SQL.getInstance());
@@ -94,13 +94,14 @@ public class Login extends javax.swing.JFrame {
 
                 for (int y = 0; y < DoctorList.size(); y++) {
                     if (DoctorList.get(y).getInsuranceNumber() == Integer.parseInt(jTextField_SocialNumber.getText())) {
-                        System.out.println("test8");
-                        System.out.println(DoctorList.get(y).getPassWord());
-                        if (DoctorList.get(y).getPassWord() == jPassword_Login.getText()) {
-                            System.out.println("Dans le serveur");
+                        
+                        if (DoctorList.get(y).getPassWord().equals(jPassword_Login.getText())) {
+                            
+                            System.out.println("ENTER");
+                            PanelProfil calendrier = new PanelProfil(DoctorList.get(y));
+                            dispose();
                         }
-                        PanelProfil calendrier = new PanelProfil(DoctorList.get(y));
-                        dispose();
+
                     } else {
                         System.out.println("This id or the password isn't correct.");
                     }
@@ -110,16 +111,15 @@ public class Login extends javax.swing.JFrame {
                 List<Patient> patientList = new ArrayList<Patient>();
                 patientList = patientDAO.find();
 
-                System.out.println("test6");
                 for (int i = 0; i < patientList.size(); i++) {
 
                     if (patientList.get(i).getInsuranceNumber() == Integer.parseInt(jTextField_SocialNumber.getText())) {
-                        System.out.println("test2");
-                        if (patientList.get(i).getPassWord() == jPassword_Login.getText()) {
-                            System.out.println("Dans le serveur");
+                        
+                        if (patientList.get(i).getPassWord().equals(jPassword_Login.getText())) {
+                            PanelProfil calendrier = new PanelProfil(patientList.get(i));
+                            dispose();
                         }
-                        PanelProfil calendrier = new PanelProfil(patientList.get(i));
-                        dispose();
+
                     } else {
                         System.out.println("This id or the password isn't correct.");
                     }

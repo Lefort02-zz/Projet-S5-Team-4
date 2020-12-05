@@ -44,7 +44,7 @@ public class PanelProfil extends JFrame {
     private final LocalTime startDay = LocalTime.of(8, 0);
     private final LocalTime endDay = LocalTime.of(19, 0);
     private final LocalTime[] time = new LocalTime[12];
-    private int numSécuPatient = 666;
+    private int numSécuPatient = 0;
     private int numSécuDocteur = 0;
 
     private String[] days = new String[5];
@@ -233,27 +233,60 @@ public class PanelProfil extends JFrame {
         profileMenuItem.addActionListener(new ButtonListener());
         logoutMenuItem.addActionListener(new ButtonListener());
 
-        /*if (numSécuPatient == 0) {
-         DefaultTableModel modelP;
-         int nbrPatient = 0;
+        if (numSécuPatient == 0) {
+            
 
-         JTable historiquePatient = new JTable();
+            ArrayList<Patient> historiqueList = new ArrayList<>();
+            Patient patientTemp;
+            String col[] = {"Nom", "Prénom", "Age", "Sexe", "Antécédants"};
 
-         for (int i = 0; i < RdvList.size(); ++i) {
+            String nom, prenom, sexe, ante;
+            int age;
+
+            DefaultTableModel modelHistorique = new DefaultTableModel(col, 0);
+
+            JTable historiquePatient = new JTable(modelHistorique);
+
+            for (int i = 0; i < RdvList.size(); ++i) {
                 
-         if (RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
-                    
-         if(RdvList.get(i).getPatient().getInsuranceNumber() == PatientList.get(i).getInsuranceNumber())
-         nbrPatient++;
-                    
-         String[][] patient = new String[nbrPatient][4];
-                    
-         }
-         }
 
-         modelP = new DefaultTableModel(event, days);
-         tableau = new JTable(model);
-         }*/
+                if (RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
+
+                    patientTemp = RdvList.get(i).getPatient();
+                    
+                    historiqueList.add(patientTemp);
+
+                }
+                
+            }
+
+            for (int k = 0; k < historiqueList.size(); ++k) {
+                nom = historiqueList.get(k).getLastName();
+                prenom = historiqueList.get(k).getName();
+                age = historiqueList.get(k).getBorn();
+                sexe = historiqueList.get(k).getSexe();
+                ante = historiqueList.get(k).getAntecedent();
+
+                Object[] data = {nom, prenom, age, sexe, ante};
+
+                modelHistorique.addRow(data);
+            }
+            
+            
+
+            JScrollPane hisPatient = new JScrollPane(historiquePatient);
+             
+            panel.add(hisPatient);
+            hisPatient.setSize(5 * 170 - 1, 12 * 30 - 7);
+            
+            size = hisPatient.getSize();
+            
+            System.out.println(size.width);
+            hisPatient.setBounds(540 + insets.left, 730 + insets.top, size.width, size.height);
+            
+            
+            //hisPatient.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        }
     }
 
     public void infoPanel(int row, int col) {
@@ -942,8 +975,6 @@ public class PanelProfil extends JFrame {
 
                     frame.dispose();
                     dispose();
-                    
-                    
 
                 }
             }
