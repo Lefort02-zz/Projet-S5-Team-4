@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -211,6 +212,10 @@ public class PanelProfil extends JFrame {
         hours.setBounds(500 + insets.left, 305 + insets.top, size.width, size.height);
 
         tableau.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        for (int i = 0; i < days.length; ++i) {
+            tableau.getColumnModel().getColumn(i).setHeaderRenderer(new HorizontalAlignmentHeaderRenderer(SwingConstants.CENTER));
+        }
+        tableau.getTableHeader().setResizingAllowed(false);
 
         panel.setBackground(Color.white);
         colorActualDay();
@@ -234,7 +239,6 @@ public class PanelProfil extends JFrame {
         logoutMenuItem.addActionListener(new ButtonListener());
 
         if (numSécuPatient == 0) {
-            
 
             ArrayList<Patient> historiqueList = new ArrayList<>();
             Patient patientTemp;
@@ -248,16 +252,17 @@ public class PanelProfil extends JFrame {
             JTable historiquePatient = new JTable(modelHistorique);
 
             for (int i = 0; i < RdvList.size(); ++i) {
-                
 
                 if (RdvList.get(i).getDoctor().insuranceNumber == numSécuDocteur) {
 
                     patientTemp = RdvList.get(i).getPatient();
-                    
-                    historiqueList.add(patientTemp);
+
+                    if (historiqueList.contains(patientTemp) == false) {
+                        historiqueList.add(patientTemp);
+                    }
 
                 }
-                
+
             }
 
             for (int k = 0; k < historiqueList.size(); ++k) {
@@ -271,21 +276,28 @@ public class PanelProfil extends JFrame {
 
                 modelHistorique.addRow(data);
             }
-            
-            
 
             JScrollPane hisPatient = new JScrollPane(historiquePatient);
-             
+
             panel.add(hisPatient);
             hisPatient.setSize(5 * 170 - 1, 12 * 30 - 7);
-            
+
             size = hisPatient.getSize();
-            
+
             System.out.println(size.width);
             hisPatient.setBounds(540 + insets.left, 730 + insets.top, size.width, size.height);
-            
-            
-            //hisPatient.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+
+            historiquePatient.setRowHeight(30);
+
+            historiquePatient.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+
+            for (int i = 0; i < col.length; ++i) {
+                historiquePatient.getColumnModel().getColumn(i).setHeaderRenderer(new HorizontalAlignmentHeaderRenderer(SwingConstants.CENTER));
+            }
+            historiquePatient.getTableHeader().setResizingAllowed(false);
+            historiquePatient.setDefaultEditor(Object.class, null);
+            historiquePatient.getTableHeader().setReorderingAllowed(false);
+
         }
     }
 
@@ -889,6 +901,26 @@ public class PanelProfil extends JFrame {
             //Return the JLabel which renders the cell.
             return l;
 
+        }
+    }
+
+    class HorizontalAlignmentHeaderRenderer implements TableCellRenderer {
+
+        private int horizontalAlignment = SwingConstants.LEFT;
+
+        public HorizontalAlignmentHeaderRenderer(int horizontalAlignment) {
+            this.horizontalAlignment = horizontalAlignment;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(
+                JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int column) {
+            TableCellRenderer r = table.getTableHeader().getDefaultRenderer();
+            JLabel l = (JLabel) r.getTableCellRendererComponent(
+                    table, value, isSelected, hasFocus, row, column);
+            l.setHorizontalAlignment(horizontalAlignment);
+            return l;
         }
     }
 
