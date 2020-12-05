@@ -771,14 +771,14 @@ public class PanelProfil extends JFrame {
                     numSecu.setText(String.valueOf(numsecuText));
                     psw.setText(DoctorList.get(i).getPassWord());
 
-                    size = sexe.getPreferredSize();
-                    nom.setBounds(350 + insetsI.left, 120 + insetsI.top, size.width, size.height);
-                    prenom.setBounds(350 + insetsI.left, 140 + insetsI.top, size.width, size.height);
-                    age.setBounds(350 + insetsI.left, 160 + insetsI.top, size.width, size.height);
-                    sexe.setBounds(350 + insetsI.left, 180 + insetsI.top, size.width, size.height);
+                    size = antecedent.getPreferredSize();
+                    nom.setBounds(350 + insetsI.left, 120 + insetsI.top, 50, size.height);
+                    prenom.setBounds(350 + insetsI.left, 140 + insetsI.top, 50, size.height);
+                    age.setBounds(350 + insetsI.left, 160 + insetsI.top, 50, size.height);
+                    sexe.setBounds(350 + insetsI.left, 180 + insetsI.top, 50, size.height);
                     antecedent.setBounds(350 + insetsI.left, 200 + insetsI.top, size.width, size.height);
-                    numSecu.setBounds(350 + insetsI.left, 220 + insetsI.top, size.width, size.height);
-                    psw.setBounds(350 + insetsI.left, 240 + insetsI.top, size.width, size.height);
+                    numSecu.setBounds(350 + insetsI.left, 220 + insetsI.top, 50, size.height);
+                    psw.setBounds(350 + insetsI.left, 240 + insetsI.top, 50, size.height);
 
                 }
 
