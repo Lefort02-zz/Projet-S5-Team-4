@@ -83,6 +83,14 @@ public class PanelProfil extends JFrame {
     private JTable historiquePatient;
 
     private JButton addRdv;
+    private JList listDoc;
+    private boolean list;
+
+    private Patient p;
+    private JFrame frameAnte = new JFrame();
+    private JPanel panelAnte = new JPanel();
+    private JTextField antnew;
+    private JButton update = new JButton("Update");
 
     public PanelProfil(Person p) {
 
@@ -311,21 +319,29 @@ public class PanelProfil extends JFrame {
         }
 
         if (numSécuDocteur == 0) {
+
             addRdv = new JButton("Nouveau rendez-vous");
 
             addRdv.setBackground(new java.awt.Color(102, 102, 102));
             addRdv.setFont(new java.awt.Font("Arial", 0, 12));
-            addRdv.setForeground(new java.awt.Color(255, 255, 255));
             addRdv.setBorderPainted(false);
             addRdv.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             addRdv.setFocusable(false);
 
             size = addRdv.getSize();
-            addRdv.setBounds(100 + insets.left, 300 + insets.top, 50, 20);
-            
+            addRdv.setBounds(100 + insets.left, 300 + insets.top, 200, 30);
+
             panel.add(addRdv);
-            
-            System.out.println("test");
+
+            ArrayList<Doctor> arrayDoc = new ArrayList<>();
+
+            listDoc = new JList(DoctorList.toArray());
+
+            listDoc.setBounds(100, 330, 200, 100);
+            list = false;
+            listDoc.setVisible(list);
+
+            addRdv.addActionListener(new ButtonListener());
         }
 
     }
@@ -901,6 +917,92 @@ public class PanelProfil extends JFrame {
 
     }
 
+    public void patientUpdate() {
+        frameAnte = new JFrame("PatientUpdate");
+
+        setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
+
+        JLabel Lnom = new JLabel("Nom: " + this.p.getLastName());
+        Lnom.setBounds(25, 50, 100, 30);
+        JLabel Lprenom = new JLabel("Prénom: " + this.p.getName());
+        Lprenom.setBounds(25, 100, 100, 30);
+        JLabel Lage = new JLabel("Age: " + this.p.getBorn());
+        Lage.setBounds(25, 150, 100, 30);
+        JLabel Lantecedent = new JLabel("Antécédents: ");
+        Lantecedent.setBounds(25, 200, 100, 30);
+        antnew = new JTextField(this.p.getAntecedent());
+        antnew.setBounds(115, 200, 400, 30);
+        JLabel Lsexe = new JLabel("Sexe: " + this.p.getSexe());
+        Lsexe.setBounds(25, 250, 100, 30);
+        JLabel LnumSecu = new JLabel("Numéro de sécurité social : " + this.p.getInsuranceNumber());
+        LnumSecu.setBounds(25, 300, 500, 30);
+        update.setBounds(25, 350, 100, 30);
+        update.addActionListener(new ButtonListener());
+
+        panelAnte.add(Lnom);
+        panelAnte.add(Lprenom);
+        panelAnte.add(Lage);
+        panelAnte.add(Lantecedent);
+        panelAnte.add(antnew);
+        panelAnte.add(Lsexe);
+        panelAnte.add(LnumSecu);
+        panelAnte.add(update);
+
+        panelAnte.setLayout(null);
+
+        frameAnte.add(panelAnte);
+        panelAnte.setVisible(true);
+
+        frameAnte.setSize(600, 500);
+        frameAnte.setLocationRelativeTo(null);
+        frameAnte.setVisible(true);
+
+       /* if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) { //Affiche les informations si la personne connecté est un patient
+
+            if (RdvList.get(i).getNumberRDV() == tableau.getValueAt(row, col).toString()) {
+
+                numRdv.setText(RdvList.get(i).getNumberRDV());
+
+                nom.setText(RdvList.get(i).getDoctor().getLastName());
+
+                prenom.setText(RdvList.get(i).getDoctor().getName());
+
+                info.setText(RdvList.get(i).getInformations());
+
+                datetemp = RdvList.get(i).getDate();
+                date.setText(format.format(datetemp));
+
+                heuretemp = RdvList.get(i).getTime();
+                heure.setText(heuretemp.toString());
+
+                size = date.getPreferredSize();
+                numRdv.setFont(new Font("Arial", Font.PLAIN, 12));
+                nom.setFont(new Font("Arial", Font.PLAIN, 12));
+                prenom.setFont(new Font("Arial", Font.PLAIN, 12));
+                info.setFont(new Font("Arial", Font.PLAIN, 12));
+                date.setFont(new Font("Arial", Font.PLAIN, 12));
+                heure.setFont(new Font("Arial", Font.PLAIN, 12));
+
+                numRdv.setBounds(350 + insetsI.left, 100 + insetsI.top, size.width, size.height);
+                nom.setBounds(350 + insetsI.left, 120 + insetsI.top, size.width, size.height);
+                prenom.setBounds(350 + insetsI.left, 140 + insetsI.top, size.width, size.height);
+                info.setBounds(350 + insetsI.left, 160 + insetsI.top, size.width, size.height);
+                heure.setBounds(350 + insetsI.left, 180 + insetsI.top, size.width, size.height);
+                date.setBounds(350 + insetsI.left, 200 + insetsI.top, size.width, size.height);
+
+                Lage.setVisible(false);
+                Lsexe.setVisible(false);
+                Lantecedent.setVisible(false);
+
+                Linfo.setBounds(65 + insetsI.left, 160 + insetsI.top, size.width, size.height);
+                Ldate.setBounds(65 + insetsI.left, 180 + insetsI.top, size.width, size.height);
+                Lheure.setBounds(65 + insetsI.left, 200 + insetsI.top, size.width, size.height);
+
+            }
+
+        }*/
+    }
+
     public class ColumnColorRenderer extends DefaultTableCellRenderer {
 
         Color backgroundColor, foregroundColor;
@@ -1048,6 +1150,14 @@ public class PanelProfil extends JFrame {
                 new Login().setVisible(true);
 
             }
+            if (e.getSource() == addRdv) {
+                list = true;
+            }
+            if (e.getSource() == update) {
+                patientDAO.delete(p.getInsuranceNumber());
+                p.setAntecedent(antnew.getText());
+                patientDAO.create(p);
+            }
 
         }
     }
@@ -1067,6 +1177,7 @@ public class PanelProfil extends JFrame {
 
             if (e.getClickCount() == 2) {
                 infoPanel(row, col);
+
             }
 
         }
