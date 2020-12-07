@@ -23,6 +23,7 @@ import java.awt.font.TextAttribute;
 import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.temporal.WeekFields;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +79,10 @@ public class PanelProfil extends JFrame {
     private JPopupMenu profileMenu;
     private JMenuItem logoutMenuItem, profileMenuItem;
     private JButton deleteAccount;
+
+    private JTable historiquePatient;
+
+    private JButton addRdv;
 
     public PanelProfil(Person p) {
 
@@ -199,7 +204,7 @@ public class PanelProfil extends JFrame {
         nextWeek.setFocusable(false);
         previousWeek.setFocusable(false);
 
-        tab.setSize(5 * 170 - 1, 12 * 30 - 7);
+        tab.setSize(5 * 170 - 1, 12 * 30);
 
         Insets insets = panel.getInsets();
         size = previousWeek.getPreferredSize();
@@ -249,7 +254,7 @@ public class PanelProfil extends JFrame {
 
             DefaultTableModel modelHistorique = new DefaultTableModel(col, 0);
 
-            JTable historiquePatient = new JTable(modelHistorique);
+            historiquePatient = new JTable(modelHistorique);
 
             for (int i = 0; i < RdvList.size(); ++i) {
 
@@ -284,10 +289,16 @@ public class PanelProfil extends JFrame {
 
             size = hisPatient.getSize();
 
-            System.out.println(size.width);
             hisPatient.setBounds(540 + insets.left, 730 + insets.top, size.width, size.height);
 
             historiquePatient.setRowHeight(30);
+
+            DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+            centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
+            for (int i = 0; i < col.length; ++i) {
+                historiquePatient.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+            }
 
             historiquePatient.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
 
@@ -297,8 +308,26 @@ public class PanelProfil extends JFrame {
             historiquePatient.getTableHeader().setResizingAllowed(false);
             historiquePatient.setDefaultEditor(Object.class, null);
             historiquePatient.getTableHeader().setReorderingAllowed(false);
-
         }
+
+        if (numSécuDocteur == 0) {
+            addRdv = new JButton("Nouveau rendez-vous");
+
+            addRdv.setBackground(new java.awt.Color(102, 102, 102));
+            addRdv.setFont(new java.awt.Font("Arial", 0, 12));
+            addRdv.setForeground(new java.awt.Color(255, 255, 255));
+            addRdv.setBorderPainted(false);
+            addRdv.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            addRdv.setFocusable(false);
+
+            size = addRdv.getSize();
+            addRdv.setBounds(100 + insets.left, 300 + insets.top, 50, 20);
+            
+            panel.add(addRdv);
+            
+            System.out.println("test");
+        }
+
     }
 
     public void infoPanel(int row, int col) {
@@ -617,7 +646,6 @@ public class PanelProfil extends JFrame {
         for (int i = 0; i < days.length; ++i) {
             tableau.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
-
     }
 
     public void displayWelcome() {
@@ -866,6 +894,10 @@ public class PanelProfil extends JFrame {
         }
 
         frame.add(profilPanel);
+
+    }
+
+    public void newRdv() {
 
     }
 
