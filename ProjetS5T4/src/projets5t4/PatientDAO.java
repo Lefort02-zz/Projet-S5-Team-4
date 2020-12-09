@@ -28,7 +28,7 @@ public class PatientDAO extends DAO<Patient> {
 
         try {
 
-            String sql = "INSERT INTO patient (numSécuPatient, nom, prénom, age, antécedent, mdp) VALUES (?,?,?,?,?,?)";
+            String sql = "INSERT INTO patient (numSÃ©cuPatient, nom, prÃ©nom, age, antÃ©cedent, mdp, sexe) VALUES (?,?,?,?,?,?,?)";
             PreparedStatement statementPatient = this.connect.prepareStatement(sql);
             statementPatient.setInt(1, obj.getInsuranceNumber());
             statementPatient.setString(2, obj.getLastName());
@@ -36,6 +36,7 @@ public class PatientDAO extends DAO<Patient> {
             statementPatient.setInt(4, obj.getBorn());
             statementPatient.setString(5, obj.getAntecedent());
             statementPatient.setString(6, obj.getPassWord());
+            statementPatient.setString(7, obj.getSexe());
 
             int row = statementPatient.executeUpdate();
             if (row > 0) {
@@ -59,8 +60,8 @@ public class PatientDAO extends DAO<Patient> {
 
             Statement stmt = this.connect.createStatement();
 
-            stmt.execute("DELETE FROM patient WHERE numSécuPatient =" + numSecu);
-            stmt.execute("DELETE FROM rdv WHERE numSécuPatient =" + numSecu);
+            stmt.execute("DELETE FROM patient WHERE numSï¿½cuPatient =" + numSecu);
+            stmt.execute("DELETE FROM rdv WHERE numSï¿½cuPatient =" + numSecu);
 
             stmt.close();
 
@@ -92,7 +93,7 @@ public class PatientDAO extends DAO<Patient> {
             );
 
             while (rs.next()) {
-                Patient pat = new Patient(rs.getString(2), rs.getString(3), rs.getInt(1), rs.getInt(4), rs.getString(6), rs.getString(5));
+                Patient pat = new Patient(rs.getString(2), rs.getString(3), rs.getInt(1), rs.getInt(4), rs.getString(6), rs.getString(5), rs.getString(7));
                 PatientList.add(pat);
             }
 

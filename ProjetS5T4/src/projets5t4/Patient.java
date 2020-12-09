@@ -15,8 +15,8 @@ public class Patient extends Person {
 
     private String antecedent;
 
-    public Patient(String name, String lastName, int insuranceN, int born, String passW, String ant) {
-        super(name, lastName, insuranceN, born, passW);
+    public Patient(String name, String lastName, int insuranceN, int born, String passW, String ant, String sexe) {
+        super(name, lastName, insuranceN, born, passW, sexe);
         this.antecedent = ant;
     }
 

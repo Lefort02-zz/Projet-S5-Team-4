@@ -17,43 +17,37 @@ public class ProjetS5T4 {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
 
-        PanelProfil calendrier = new PanelProfil();
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Login().setVisible(true);
 
-       /* DAO<Patient> patientDAO = new PatientDAO(SQL.getInstance());
-        DAO<Docteur> docteurDAO = new DocteurDAO(SQL.getInstance());
-        DAO<Event> eventDAO = new EventDAO(SQL.getInstance());
-        
-        
-            Patient patient = patientDAO.find(1111);
-            System.out.println("Num sécu: " + patient.getNumSecuPatient()+ "  nom: " + patient.getNomPatient()+ " prénom: " + patient.getPrenomPatient()+ " age: " + patient.getAge()+ " antécédents: " + patient.getAntecedent()
-            
-            + " password: " + patient.getPassword());
-            
-            Docteur docteur = docteurDAO.find(2222);
-            System.out.println("Num sécu: " + docteur.getNumSecuDocteur()+ "  nom: " + docteur.getNomDoc()+ " prénom: " + docteur.getPrenomDoc()+ " age: " + docteur.getAge()+ " spécialité: " + docteur.getSpéDoc()
-            
-            + " password: " + docteur.getPasswordDoc());
-            
-            
-            Event rdv = eventDAO.find(1555);
-            System.out.println("Num RDV: " + rdv.getNumRDV()+ "  date: " + rdv.getDate()+ " heure: " + rdv.getHours()+ " raison: " + rdv.getReason());*/
-        
-        
-        
-        Doctor doc1 = new Doctor("jerome","duPont",15545,58,"123456","pied");
-        
-       
-        
-        DAO<Doctor> docteurDAO = new DocteurDAO(SQL.getInstance());
-        docteurDAO.create(doc1);
-        
-        
-        
-        
-        
+            }
+        });
     }
 
 }

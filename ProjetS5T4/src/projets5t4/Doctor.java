@@ -13,9 +13,9 @@ public class Doctor extends Person {
 
     private String speciality;
 
-     public Doctor(String name, String lastName, int insuranceN, int age, String passW, String spe)
+     public Doctor(String name, String lastName, int insuranceN, int age, String passW, String spe, String sexe)
      {
-         super(name,lastName,insuranceN,age,passW);
+         super(name,lastName,insuranceN,age,passW, sexe);
          this.speciality = spe;
      }
 
