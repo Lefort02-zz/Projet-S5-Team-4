@@ -48,20 +48,20 @@ public class DocteurDAO extends DAO<Doctor> {
         } // Handle any errors that may have occurred.
         catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("DataBase connection error");
+            System.out.println("DataBase connection error : docteur existe deja");
         }
 
     }
 
     @Override
     public void delete(int numSecu) {
-        
+
         try {
-            
+
             Statement stmt = this.connect.createStatement();
-            
-            stmt.execute("DELETE FROM docteur WHERE numSécuDocteur =" + numSecu);
-            stmt.execute("DELETE FROM rdv WHERE numSécuDocteur =" + numSecu);
+
+            stmt.execute("DELETE FROM docteur WHERE numS�cuDocteur =" + numSecu);
+            stmt.execute("DELETE FROM rdv WHERE numS�cuDocteur =" + numSecu);
 
             stmt.close();
 
@@ -74,7 +74,7 @@ public class DocteurDAO extends DAO<Doctor> {
     }
 
     @Override
-    public boolean update(Doctor obj) {
+    public boolean update(Doctor obj, String ant) { 
         return false;
 
     }

@@ -48,7 +48,7 @@ public class PatientDAO extends DAO<Patient> {
         } // Handle any errors that may have occurred.
         catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("DataBase connection error");
+            System.out.println("DataBase connection error : patient existe deja");
         }
 
     }
@@ -60,8 +60,8 @@ public class PatientDAO extends DAO<Patient> {
 
             Statement stmt = this.connect.createStatement();
 
-            stmt.execute("DELETE FROM patient WHERE numSécuPatient =" + numSecu);
-            stmt.execute("DELETE FROM rdv WHERE numSécuPatient =" + numSecu);
+            stmt.execute("DELETE FROM patient WHERE numS�cuPatient =" + numSecu);
+            stmt.execute("DELETE FROM rdv WHERE numS�cuPatient =" + numSecu);
 
             stmt.close();
 
@@ -74,7 +74,30 @@ public class PatientDAO extends DAO<Patient> {
     }
 
     @Override
-    public boolean update(Patient obj) {
+    public boolean update(Patient obj, String ant) {
+    	
+    	 try {
+
+             String sql = "UPDATE patient SET antécedent = '"+ant+"' WHERE numSécuPatient = '"+obj.getInsuranceNumber()+"'";
+             PreparedStatement statementPatient = this.connect.prepareStatement(sql);
+
+             int row = statementPatient.executeUpdate();
+             
+             if (row > 0) {
+                 System.out.println("command executed");
+             }
+
+             statementPatient.close();
+
+         } // Handle any errors that may have occurred.
+         catch (SQLException e) {
+             e.printStackTrace();
+             System.out.println("DataBase connection error antecedent.");
+         }
+    	
+    	
+    	
+    	//PreparedStatement prepare = conn.prepareStatement("UPDATE professeur set prof_prenom = ? WHERE prof_nom = 'MAMOU'");
         return false;
 
     }

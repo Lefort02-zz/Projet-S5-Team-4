@@ -257,7 +257,7 @@ public class Login extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(218, 227, 230));
 
-        jLabel8.setIcon(new javax.swing.ImageIcon("C:\\Users\\Alex\\Desktop\\GitHub\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\logo 2.jpg")); // NOI18N
+        jLabel8.setIcon(new javax.swing.ImageIcon("C:\\Users\\Gaspard Lefort-Louet\\iCloudDrive\\Desktop\\Github\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\logo 2.jpg")); // NOI18N
 
         jLabel_close.setFont(new java.awt.Font("Yu Gothic UI", 1, 22)); // NOI18N
         jLabel_close.setText(" X");
@@ -322,9 +322,9 @@ public class Login extends javax.swing.JFrame {
 
         jSeparator2.setForeground(new java.awt.Color(255, 255, 255));
 
-        jLabel_password.setIcon(new javax.swing.ImageIcon("C:\\Users\\Alex\\Desktop\\GitHub\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\icons8-ouvrir-32.png")); // NOI18N
+        jLabel_password.setIcon(new javax.swing.ImageIcon("C:\\Users\\Gaspard Lefort-Louet\\iCloudDrive\\Desktop\\Github\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\icons8-ouvrir-32.png")); // NOI18N
 
-        jLabel_SocialNumber.setIcon(new javax.swing.ImageIcon("C:\\Users\\Alex\\Desktop\\GitHub\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\icons8-utilisateur-32.png")); // NOI18N
+        jLabel_SocialNumber.setIcon(new javax.swing.ImageIcon("C:\\Users\\Gaspard Lefort-Louet\\iCloudDrive\\Desktop\\Github\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\icons8-utilisateur-32.png")); // NOI18N
 
         jLabel_ForgetPassword.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel_ForgetPassword.setForeground(new java.awt.Color(255, 255, 255));
