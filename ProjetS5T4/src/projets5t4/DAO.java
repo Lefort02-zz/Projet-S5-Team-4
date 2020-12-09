@@ -23,11 +23,11 @@ public abstract class DAO<T> {
 
         public abstract void create(T obj);
   
-        public abstract void delete(int numSécu);
+        public abstract void delete(int numSÃ©cu);
         
         public abstract void delete(String numRdv);
   
-        public abstract boolean update(T obj);
+        public abstract boolean update(T obj, String S);
 
         public abstract List<T> find();
         
