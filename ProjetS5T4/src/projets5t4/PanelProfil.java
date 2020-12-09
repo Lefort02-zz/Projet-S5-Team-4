@@ -17,6 +17,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.Insets;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.font.TextAttribute;
@@ -29,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -84,7 +88,11 @@ public class PanelProfil extends JFrame {
 
     private JButton addRdv;
     private JList listDoc;
-    private boolean list;
+    private JPopupMenu addRdvMenu;
+    private JMenu[] doctorItems;
+    private JMenuItem[] speItems;
+    private ArrayList<RDV> listNewRdv = new ArrayList<>();
+    private int numSecuDocTemp, colorX, colorY;
 
     private Patient p;
     private JFrame frameAnte = new JFrame();
@@ -333,13 +341,19 @@ public class PanelProfil extends JFrame {
 
             panel.add(addRdv);
 
-            ArrayList<Doctor> arrayDoc = new ArrayList<>();
+            addRdvMenu = new JPopupMenu();
+            doctorItems = new JMenu[DoctorList.size()];
+            speItems = new JMenuItem[doctorItems.length];
 
-            listDoc = new JList(DoctorList.toArray());
+            for (int i = 0; i < DoctorList.size(); ++i) {
+                addRdvMenu.add(doctorItems[i] = new JMenu("Docteur " + DoctorList.get(i).getName()));
 
-            listDoc.setBounds(100, 330, 200, 100);
-            list = false;
-            listDoc.setVisible(list);
+            }
+            for (int i = 0; i < doctorItems.length; ++i) {
+                doctorItems[i].add(speItems[i] = new JMenuItem(DoctorList.get(i).getSpeciality()));
+                speItems[i].addActionListener(new ButtonListener());
+
+            }
 
             addRdv.addActionListener(new ButtonListener());
         }
@@ -596,7 +610,7 @@ public class PanelProfil extends JFrame {
     }
 
     public void colorActualDay() {
-
+        /*
         String date;
 
         calendar = Calendar.getInstance();
@@ -611,7 +625,8 @@ public class PanelProfil extends JFrame {
             if (date.equals(days[i])) {
                 column.getColumn(i).setCellRenderer(new ColumnColorRenderer(Color.lightGray));
             }
-        }
+        }*/
+
     }
 
     public void displayEvent() {
@@ -696,7 +711,7 @@ public class PanelProfil extends JFrame {
 
         welcome.setFont(new Font("Arial", Font.BOLD, 20));
         Dimension size = welcome.getPreferredSize();
-        welcome.setBounds(800 + insetsW.left, 10 + insetsW.top, size.width, size.height);
+        welcome.setBounds(800 + insetsW.left, 10 + insetsW.top, size.width + 50, size.height);
 
         panel.add(welcome);
 
@@ -775,14 +790,14 @@ public class PanelProfil extends JFrame {
         profilPanel.add(titre);
         Insets insetsTitle = profilPanel.getInsets();
         Dimension size = titre.getPreferredSize();
-        titre.setBounds(230 + insetsTitle.left, 10 + insetsTitle.top, size.width, size.height);
+        titre.setBounds(230 + insetsTitle.left, 10 + insetsTitle.top, size.width + 100, size.height);
 
         deleteAccount = new JButton("SUPPRIMER VOTRE COMPTE");
 
         profilPanel.add(deleteAccount);
         Insets insetsD = profilPanel.getInsets();
         size = deleteAccount.getPreferredSize();
-        deleteAccount.setBounds(200 + insetsD.left, 400 + insetsD.top, size.width, size.height);
+        deleteAccount.setBounds(150 + insetsD.left, 400 + insetsD.top, size.width + 100, size.height);
         deleteAccount.setFocusable(false);
         deleteAccount.setBackground(Color.red);
         deleteAccount.addActionListener(new ButtonListener());
@@ -915,6 +930,66 @@ public class PanelProfil extends JFrame {
 
     public void newRdv() {
 
+        String rdvImpString;
+        int horaire;
+
+        for (int i = 0; i < RdvList.size(); ++i) {
+            if (RdvList.get(i).getDoctor().getInsuranceNumber() == numSecuDocTemp) {
+                listNewRdv.add(RdvList.get(i));
+            }
+
+            if (RdvList.get(i).getPatient().getInsuranceNumber() == numSécuPatient) {
+                listNewRdv.add(RdvList.get(i));
+            }
+        }
+
+        for (int i = 0; i < listNewRdv.size(); ++i) {
+            System.out.println("RDV " + listNewRdv.get(i).getNumberRDV());
+        }
+
+        tableau.setShowHorizontalLines(true);
+        tableau.setShowVerticalLines(true);
+
+        for (int i = 0; i < listNewRdv.size(); ++i) {
+
+            for (int k = 0; k < time.length; ++k) {
+
+                for (int j = 0; j < days.length; ++j) {
+
+                    rdvImpString = format.format(listNewRdv.get(i).getDate());
+                    horaire = listNewRdv.get(i).getTime().getHours();
+
+                    if (time[k].getHour() == horaire && days[j].equals(rdvImpString)) {
+
+                        colorX = k;
+                        colorY = j;
+
+                        TableCellRenderer cell = tableau.getCellRenderer(colorX, colorY);
+
+                        System.out.println("Apres cell " + "X " + colorX + " Y " + colorY);
+                        
+                        tableau.getColumnModel().getColumn(j).setCellRenderer(new CustomRenderer());
+
+                    }
+
+                    
+                    //System.out.println("Apres ssprd " + "X " + colorX + " Y " + colorY);
+
+                    model.fireTableDataChanged();
+
+                    tableau.setModel(model);
+
+                }
+            }
+        }
+        
+        /*DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
+        for (int i = 0; i < days.length; ++i) {
+            tableau.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }*/
+
     }
 
     public void patientUpdate() {
@@ -957,7 +1032,7 @@ public class PanelProfil extends JFrame {
         frameAnte.setLocationRelativeTo(null);
         frameAnte.setVisible(true);
 
-       /* if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) { //Affiche les informations si la personne connecté est un patient
+        /* if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) { //Affiche les informations si la personne connecté est un patient
 
             if (RdvList.get(i).getNumberRDV() == tableau.getValueAt(row, col).toString()) {
 
@@ -1003,23 +1078,20 @@ public class PanelProfil extends JFrame {
         }*/
     }
 
-    public class ColumnColorRenderer extends DefaultTableCellRenderer {
+    private class CustomRenderer extends DefaultTableCellRenderer {
 
-        Color backgroundColor, foregroundColor;
-
-        public ColumnColorRenderer(Color backgroundColor) {
-            super();
-            this.backgroundColor = backgroundColor;
-        }
-
-        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            cell.setBackground(backgroundColor);
-            cell.setForeground(foregroundColor);
-            return cell;
-        }
+            Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
+            System.out.println("Dans ssprg " + "X " + colorX + " Y " + colorY);
+
+            if (row == colorX && column == colorY) {
+                cellComponent.setBackground(Color.RED);
+            } else {
+                cellComponent.setBackground(Color.GREEN);
+            }
+            return cellComponent;
+        }
     }
 
     public class StatusColumnCellRenderer extends DefaultTableCellRenderer {
@@ -1038,7 +1110,7 @@ public class PanelProfil extends JFrame {
         }
     }
 
-    class HorizontalAlignmentHeaderRenderer implements TableCellRenderer {
+    private class HorizontalAlignmentHeaderRenderer implements TableCellRenderer {
 
         private int horizontalAlignment = SwingConstants.LEFT;
 
@@ -1058,7 +1130,7 @@ public class PanelProfil extends JFrame {
         }
     }
 
-    private static class NoSelectionModel extends DefaultListSelectionModel {
+    private class NoSelectionModel extends DefaultListSelectionModel {
 
         @Override
         public void setAnchorSelectionIndex(final int anchorIndex) {
@@ -1151,12 +1223,22 @@ public class PanelProfil extends JFrame {
 
             }
             if (e.getSource() == addRdv) {
-                list = true;
+                addRdvMenu.show(addRdv, addRdv.getWidth() / 2 - 50, addRdv.getHeight());
             }
             if (e.getSource() == update) {
                 patientDAO.delete(p.getInsuranceNumber());
                 p.setAntecedent(antnew.getText());
                 patientDAO.create(p);
+            }
+
+            for (int i = 0; i < doctorItems.length; ++i) {
+                if (e.getSource() == speItems[i]) {
+                    listNewRdv.clear();
+                    numSecuDocTemp = DoctorList.get(i).getInsuranceNumber();
+                    System.out.println("temp num " + numSecuDocTemp);
+                    newRdv();
+
+                }
             }
 
         }
