@@ -14,9 +14,9 @@ import java.sql.*;
 public abstract class DAO<T> {
     
     protected Connection connect = null;
-        
-
-        public DAO(Connection conn){
+    
+        public DAO(Connection conn)
+        {
                 this.connect = conn;
         }
         
@@ -27,7 +27,7 @@ public abstract class DAO<T> {
         
         public abstract void delete(String numRdv);
   
-        public abstract boolean update(T obj);
+        public abstract boolean update(T obj, String S);
 
         public abstract List<T> find();
         
