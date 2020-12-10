@@ -967,14 +967,12 @@ public class PanelProfil extends JFrame {
                         TableCellRenderer cell = tableau.getCellRenderer(colorX, colorY);
 
                         System.out.println("Apres cell " + "X " + colorX + " Y " + colorY);
-                        
-                        tableau.getColumnModel().getColumn(j).setCellRenderer(new CustomRenderer());
 
                     }
 
-                    
-                    //System.out.println("Apres ssprd " + "X " + colorX + " Y " + colorY);
+                    tableau.getColumnModel().getColumn(j).setCellRenderer(new CustomRenderer());
 
+                    //System.out.println("Apres ssprd " + "X " + colorX + " Y " + colorY);
                     model.fireTableDataChanged();
 
                     tableau.setModel(model);
@@ -982,14 +980,13 @@ public class PanelProfil extends JFrame {
                 }
             }
         }
-        
+
         /*DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
         for (int i = 0; i < days.length; ++i) {
             tableau.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }*/
-
     }
 
     public void patientUpdate() {
@@ -1094,21 +1091,7 @@ public class PanelProfil extends JFrame {
         }
     }
 
-    public class StatusColumnCellRenderer extends DefaultTableCellRenderer {
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-
-            //Cells are by default rendered as a JLabel.
-            JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
-
-            l.setBackground(Color.GREEN);
-
-            //Return the JLabel which renders the cell.
-            return l;
-
-        }
-    }
+   
 
     private class HorizontalAlignmentHeaderRenderer implements TableCellRenderer {
 
