@@ -113,6 +113,7 @@ public class PanelProfil extends JFrame {
         // Set the window title.
         setTitle("Profil");
 
+        
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         // Specify what happens when the close button is clicked.
@@ -384,7 +385,7 @@ public class PanelProfil extends JFrame {
         Date datetemp = null;
 
         //ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/trash.png"));
-        deleteRdv = new JButton("Supprimerndez-vous");
+        deleteRdv = new JButton("Supprimer rendez-vous");
         deleteRdv.setBackground(new java.awt.Color(18, 92, 117));
         deleteRdv.setForeground(Color.white);
 
@@ -811,7 +812,7 @@ public class PanelProfil extends JFrame {
         size = deleteAccount.getPreferredSize();
         deleteAccount.setBounds(150 + insetsD.left, 400 + insetsD.top, size.width + 100, size.height);
         deleteAccount.setFocusable(false);
-        deleteAccount.setBackground(new java.awt.Color(18, 92, 117));
+        deleteAccount.setBackground(new java.awt.Color(178,34,34));
         deleteAccount.setForeground(Color.white);
         deleteAccount.addActionListener(new ButtonListener());
 
@@ -1048,8 +1049,10 @@ public class PanelProfil extends JFrame {
         JLabel LnumSecu = new JLabel();
         LnumSecu.setBounds(25, 300, 500, 30);
         
-        update.setBounds(25, 350, 100, 30);
+        update.setBounds(250, 350, 100, 30);
         update.addActionListener(new ButtonListener());
+        update.setBackground(new java.awt.Color(18, 92, 117));
+        update.setForeground(Color.white);
 
         panelAnte.add(Lnom);
         panelAnte.add(Lprenom);
