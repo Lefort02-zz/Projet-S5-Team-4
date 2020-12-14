@@ -95,6 +95,8 @@ public class PanelProfil extends JFrame {
     private JButton deleteAccount;
 
     private JTable historiquePatient;
+    
+    private JLabel logo;
 
     private JButton addRdv;
     private JList listDoc;
@@ -401,6 +403,15 @@ public class PanelProfil extends JFrame {
         for (int i = 0; i < RdvList.size(); ++i) {
             System.out.println(RdvList.get(i).getNumberRDV());
         }
+        
+        logo = new JLabel();
+        
+        logo.setIcon(new javax.swing.ImageIcon("C:\\Users\\Gaspard Lefort-Louet\\iCloudDrive\\Desktop\\Github\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\logo 2.jpg")); // NOI18N
+
+        size = logo.getPreferredSize();
+        logo.setBounds(750, 10, size.width, 50);
+        
+        panel.add(logo);
 
     }
 
@@ -767,7 +778,7 @@ public class PanelProfil extends JFrame {
 
         welcome.setFont(new Font("Arial", Font.BOLD, 20));
         Dimension size = welcome.getPreferredSize();
-        welcome.setBounds(800 + insetsW.left, 10 + insetsW.top, size.width + 50, size.height);
+        welcome.setBounds(825 + insetsW.left, 150 + insetsW.top, size.width + 50, size.height);
 
         panel.add(welcome);
 
@@ -1435,7 +1446,7 @@ public class PanelProfil extends JFrame {
                 
                 displayEvent();
                 popNewRdvFrame.dispose();
-                JOptionPane.showMessageDialog(null, "Le rendez-vous a bien été ajouté à votre emploi du temps");
+                //JOptionPane.showMessageDialog(null, "Le rendez-vous a bien été ajouté à votre emploi du temps");
             }
 
         }
