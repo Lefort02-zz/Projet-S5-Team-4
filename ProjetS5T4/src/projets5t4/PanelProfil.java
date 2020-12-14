@@ -14,9 +14,9 @@ import java.awt.event.ActionListener;
 import java.time.*;
 import java.util.GregorianCalendar;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
-import java.awt.Insets;
-import java.awt.Dimension;
+
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
@@ -130,8 +130,10 @@ public class PanelProfil extends JFrame {
     private void buildPanel() {
 
         panel = new JPanel();
+        panel.setBackground(new java.awt.Color(218, 227, 230));
 
         hours = new JList(time);
+        hours.setBackground(new java.awt.Color(218, 227, 230));
 
         quickInfo = new JLabel();
         panel.add(quickInfo);
@@ -192,7 +194,7 @@ public class PanelProfil extends JFrame {
         panel.add(actualWeek);
         panel.add(hours);
 
-        actualWeek.setBackground(new java.awt.Color(102, 102, 102));
+        actualWeek.setBackground(new java.awt.Color(18, 92, 117));
         actualWeek.setFont(new java.awt.Font("Arial", 0, 12));
         actualWeek.setForeground(new java.awt.Color(255, 255, 255));
         actualWeek.setBorderPainted(false);
@@ -200,7 +202,7 @@ public class PanelProfil extends JFrame {
         actualWeek.setFocusable(false);
         actualWeek.setBounds(130, 440, 110, 30);
 
-        previousWeek.setBackground(new java.awt.Color(102, 102, 102));
+        previousWeek.setBackground(new java.awt.Color(18, 92, 117));
         previousWeek.setFont(new java.awt.Font("Arial", 0, 12));
         previousWeek.setForeground(new java.awt.Color(255, 255, 255));
         previousWeek.setBorderPainted(false);
@@ -208,7 +210,7 @@ public class PanelProfil extends JFrame {
         previousWeek.setFocusable(false);
         previousWeek.setBounds(130, 440, 110, 30);
 
-        nextWeek.setBackground(new java.awt.Color(102, 102, 102));
+        nextWeek.setBackground(new java.awt.Color(18, 92, 117));
         nextWeek.setFont(new java.awt.Font("Arial", 0, 12));
         nextWeek.setForeground(new java.awt.Color(255, 255, 255));
         nextWeek.setBorderPainted(false);
@@ -238,7 +240,7 @@ public class PanelProfil extends JFrame {
         }
         tableau.getTableHeader().setResizingAllowed(false);
 
-        panel.setBackground(Color.white);
+        //panel.setBackground(Color.white);
         colorActualDay();
         displayEvent();
         displayWelcome();
@@ -247,6 +249,8 @@ public class PanelProfil extends JFrame {
         
 
         profile = new JButton("Profile");
+        profile.setBackground(new java.awt.Color(18, 92, 117));
+        profile.setForeground(Color.white);
         size = profile.getPreferredSize();
         profile.setBounds(15 + insets.left, 10 + insets.top, size.width, size.height);
         panel.add(profile);
@@ -334,8 +338,9 @@ public class PanelProfil extends JFrame {
 
             addRdv = new JButton("Nouveau rendez-vous");
 
-            addRdv.setBackground(new java.awt.Color(102, 102, 102));
+            addRdv.setBackground(new java.awt.Color(18, 92, 117));
             addRdv.setFont(new java.awt.Font("Arial", 0, 12));
+            addRdv.setForeground(Color.white);
             addRdv.setBorderPainted(false);
             addRdv.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             addRdv.setFocusable(false);
@@ -380,6 +385,8 @@ public class PanelProfil extends JFrame {
 
         //ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/trash.png"));
         deleteRdv = new JButton("Supprimerndez-vous");
+        deleteRdv.setBackground(new java.awt.Color(18, 92, 117));
+        deleteRdv.setForeground(Color.white);
 
         panelInfo.add(deleteRdv);
 
@@ -413,7 +420,7 @@ public class PanelProfil extends JFrame {
         panelInfo.add(Ldate);
         panelInfo.add(Lheure);
 
-        panelInfo.setBackground(Color.WHITE);
+        panelInfo.setBackground(new java.awt.Color(218, 227, 230));
 
         Insets insetsI = panelInfo.getInsets();
         Dimension size = LnumRdv.getPreferredSize();
@@ -566,6 +573,7 @@ public class PanelProfil extends JFrame {
         model.fireTableDataChanged();
 
         tableau.setModel(model);
+      
 
         displayEvent();
 
@@ -788,7 +796,7 @@ public class PanelProfil extends JFrame {
 
         JPanel profilPanel = new JPanel();
         profilPanel.setLayout(null);
-        profilPanel.setBackground(Color.WHITE);
+        profilPanel.setBackground(new java.awt.Color(218, 227, 230));
 
         JLabel titre = new JLabel("VOS INFORMATIONS");
         profilPanel.add(titre);
@@ -803,7 +811,8 @@ public class PanelProfil extends JFrame {
         size = deleteAccount.getPreferredSize();
         deleteAccount.setBounds(150 + insetsD.left, 400 + insetsD.top, size.width + 100, size.height);
         deleteAccount.setFocusable(false);
-        deleteAccount.setBackground(Color.red);
+        deleteAccount.setBackground(new java.awt.Color(18, 92, 117));
+        deleteAccount.setForeground(Color.white);
         deleteAccount.addActionListener(new ButtonListener());
 
         Lnom = new JLabel("Nom: ");
@@ -1194,7 +1203,7 @@ public class PanelProfil extends JFrame {
             if (e.getSource() == deleteAccount) {
 
                 int dialogButton = JOptionPane.YES_NO_OPTION;
-                int dialogResult = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimer votre conmpte ?", "Warning", dialogButton);
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimer votre compte ?", "Warning", dialogButton);
 
                 if (dialogResult == JOptionPane.YES_OPTION) {
 
@@ -1319,5 +1328,12 @@ public class PanelProfil extends JFrame {
         public void mouseExited(MouseEvent e) {
         }
 
+    }
+    
+    public static void main(String args[]) {
+    	
+    	PanelProfil calendrier = new PanelProfil(new Patient("gerome","glant",1551547,12,"15151","null","male"));
+    	
+    
     }
 }
