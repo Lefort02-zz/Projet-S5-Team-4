@@ -44,6 +44,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import org.jfree.ui.RefineryUtilities;
 
 
 public class PanelProfil extends JFrame {
@@ -53,9 +54,9 @@ public class PanelProfil extends JFrame {
     private JButton nextWeek, previousWeek, actualWeek;
     private DefaultTableModel model;
     private JList hours;
-    
+
     private JTextField raisonField = new JTextField(50);
-    
+
     private Patient pat;
     private Doctor d;
     private LocalDate dateRDV;
@@ -97,7 +98,7 @@ public class PanelProfil extends JFrame {
 
     private JButton profile;
     private JPopupMenu profileMenu;
-    private JMenuItem logoutMenuItem, profileMenuItem;
+    private JMenuItem logoutMenuItem, profileMenuItem, statMenuItem;
     private JButton deleteAccount;
 
     private JTable historiquePatient;
@@ -121,9 +122,11 @@ public class PanelProfil extends JFrame {
     private RDV rdvNew;
     private JFrame popNewRdvFrame = new JFrame();
     private JPanel panelNewRdv = new JPanel();
-    
-    
+
+
     private int row3, col3;
+
+    private JLabel logo;
 
     public PanelProfil() throws HeadlessException {
     }
@@ -140,7 +143,6 @@ public class PanelProfil extends JFrame {
 
         // Set the window title.
         setTitle("Profil");
-
 
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -286,6 +288,12 @@ public class PanelProfil extends JFrame {
 
         profileMenu = new JPopupMenu();
         profileMenu.add(profileMenuItem = new JMenuItem("Profile"));
+        if (numSécuPatient == 0) {
+            profileMenu.add(statMenuItem = new JMenuItem("Statistiques"));
+
+            statMenuItem.addActionListener(new ButtonListener());
+
+        }
         profileMenu.add(logoutMenuItem = new JMenuItem("Logout"));
 
         profile.addActionListener(new ButtonListener());
@@ -413,6 +421,15 @@ public class PanelProfil extends JFrame {
         for (int i = 0; i < RdvList.size(); ++i) {
             System.out.println(RdvList.get(i).getNumberRDV());
         }
+
+        logo = new JLabel();
+
+        logo.setIcon(new javax.swing.ImageIcon("C:\\Users\\Gaspard Lefort-Louet\\iCloudDrive\\Desktop\\Github\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\logo 2.jpg")); // NOI18N
+
+        size = logo.getPreferredSize();
+        logo.setBounds(750, 10, size.width, 50);
+
+        panel.add(logo);
 
     }
 
@@ -620,7 +637,6 @@ public class PanelProfil extends JFrame {
         model.fireTableDataChanged();
 
         tableau.setModel(model);
-
 
         displayEvent();
 
@@ -870,7 +886,7 @@ public class PanelProfil extends JFrame {
         size = deleteAccount.getPreferredSize();
         deleteAccount.setBounds(150 + insetsD.left, 400 + insetsD.top, size.width + 100, size.height);
         deleteAccount.setFocusable(false);
-        deleteAccount.setBackground(new java.awt.Color(178,34,34));
+        deleteAccount.setBackground(new java.awt.Color(178, 34, 34));
         deleteAccount.setForeground(Color.white);
         deleteAccount.addActionListener(new ButtonListener());
 
@@ -1059,44 +1075,44 @@ public class PanelProfil extends JFrame {
     }
 
     public void newRdvPopup(int row, int col) {
-    	
+
     	panelNewRdv.removeAll();
         popNewRdvFrame = new JFrame("Nouveaux rendez-vous");
 
         setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
-        
-        
-        
+
+
+
         int intRdv = 0;
         int intfinal =0;
-        
-        
-	        for (int k = 0; k < RdvList.size(); ++k) 
+
+
+	        for (int k = 0; k < RdvList.size(); ++k)
 	        {
 	            intRdv = Integer.parseInt(RdvList.get(k).getNumberRDV().substring(3));
-	            
+
 	            if(intRdv > intfinal)
 	            	intfinal=intRdv;
 	        }
 
        intfinal++;
-       
+
         newNumRdvString = "RDV" + String.valueOf(intfinal);
 
-        
 
-        for (int i = 0; i < PatientList.size(); ++i) 
+
+        for (int i = 0; i < PatientList.size(); ++i)
         {
 
-            if (PatientList.get(i).getInsuranceNumber() == numSécuPatient) 
+            if (PatientList.get(i).getInsuranceNumber() == numSécuPatient)
             {
-            	
+
             	pat = PatientList.get(i);
             }
         }
-        
-        
-    
+
+
+
         JLabel Lnom = new JLabel("Last Name : " + pat.getLastName());
         Lnom.setBounds(25, 50, 300, 30);
         JLabel Lprenom = new JLabel("Name : " + pat.getName());
@@ -1105,7 +1121,7 @@ public class PanelProfil extends JFrame {
         Lage.setBounds(25, 150, 300, 30);
         JLabel Lraison = new JLabel("Raison du rendez-vous : ");
         Lraison.setBounds(25, 200, 200, 30);
-        
+
         ////////////////////////////////////textfield error
         raisonField.setBounds(25, 250, 400, 30);
         JLabel Lsexe = new JLabel("Sexe : " + pat.getSexe());
@@ -1119,11 +1135,11 @@ public class PanelProfil extends JFrame {
         Ldate.setBounds(25, 450, 500, 30);
         JLabel Lheure = new JLabel("Heure: " + time[row]);
         Lheure.setBounds(25, 500, 500, 30);
-        
+
         JButton validerButton = new JButton("Valider le rendez-vous");
         validerButton.setBounds(25, 550, 200, 30);
         validerButton.addActionListener(new ButtonListener1());
-        
+
 
         popNewRdvFrame.add(Lnom);
         popNewRdvFrame.add(Lprenom);
@@ -1141,29 +1157,50 @@ public class PanelProfil extends JFrame {
         popNewRdvFrame.setSize(500, 700);
         popNewRdvFrame.setLocationRelativeTo(null);
         popNewRdvFrame.setVisible(true);
-        
-        for (int l = 0; l < DoctorList.size(); ++l) 
+
+        for (int l = 0; l < DoctorList.size(); ++l)
         {
-            if (numSecuDocTemp == DoctorList.get(l).getInsuranceNumber()) 
+            if (numSecuDocTemp == DoctorList.get(l).getInsuranceNumber())
             {
                 d = DoctorList.get(l);
             }
         }
-       
+
 
         raisonRDV = raisonField.getText();
         dateRDV = LocalDate.parse(days[col], formatter);
 
-          
-                
-                
-    }
-    
-    private class ButtonListener1 implements ActionListener {
+                LnumRdv.setText("Numéro de rendez-vous: " + newNumRdvString);
+                LnumRdv.setBounds(25, 0, 300, 30);
+
+                Lnom.setText("Last Name : " + PatientList.get(i).getLastName());
+                Lnom.setBounds(25, 50, 300, 30);
+
+                Lprenom.setText("Name : " + PatientList.get(i).getName());
+                Lprenom.setBounds(25, 100, 300, 30);
+
+                Lage.setText("Age : " + String.valueOf(PatientList.get(i).getBorn()) + " ans");
+                Lage.setBounds(25, 150, 300, 30);
+
+                Lsexe.setText("Sexe : " + PatientList.get(i).getSexe());
+                Lsexe.setBounds(25, 250, 300, 30);
+
+                raisonField.setBounds(155, 200, 400, 30);
+
+                LnumSecu.setText("Insurance Number : " + String.valueOf(PatientList.get(i).getInsuranceNumber()));
+                LnumSecu.setBounds(25, 300, 500, 30);
+
+                Ldate.setText("Date: " + days[col]);
+                Ldate.setBounds(25, 350, 500, 30);
+
+                Lheure.setText("Heure: " + time[row]);
+                Lheure.setBounds(25, 400, 500, 30);
+
+                String raison = raisonField.getText();
 
         @Override
         public void actionPerformed(ActionEvent e) {
-        	
+
         	rdvDao.create(new RDV(d, pat, Date.valueOf(dateRDV), Time.valueOf(time[row]), String.valueOf(raisonField.getText()), newNumRdvString));
 
             panel.repaint();
@@ -1173,7 +1210,7 @@ public class PanelProfil extends JFrame {
             displayEvent();
             popNewRdvFrame.dispose();
             JOptionPane.showMessageDialog(null,"Le rendez-vous a bien été ajouté à votre emploi du temps");
-        	
+
         }
         }
 
@@ -1208,6 +1245,8 @@ public class PanelProfil extends JFrame {
     public void patientUpdate(int row, int col) {
 
         frameAnte = new JFrame("PatientUpdate");
+
+        frameAnte.removeAll();
 
         setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 
@@ -1336,8 +1375,8 @@ public class PanelProfil extends JFrame {
         public void setSelectionInterval(final int index0, final int index1) {
         }
     }
-    
-    
+
+
 
     private class ButtonListener implements ActionListener {
 
@@ -1380,6 +1419,13 @@ public class PanelProfil extends JFrame {
             if (e.getSource() == profileMenuItem) {
                 System.out.println("Profile popup");
                 profilePopup();
+            }
+            if (e.getSource() == statMenuItem) {
+                final Tartiflette fromageStat = new Tartiflette("Statistique utilisation");
+                fromageStat.pack();
+                //fromageStat.setSize(750, 550);
+                RefineryUtilities.centerFrameOnScreen(fromageStat);
+                fromageStat.setVisible(true);
             }
 
             if (e.getSource() == deleteAccount) {
@@ -1443,7 +1489,7 @@ public class PanelProfil extends JFrame {
 
             }
 
-            
+
 
         }
     }

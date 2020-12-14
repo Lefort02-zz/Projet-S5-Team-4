@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
+import javax.swing.JFrame;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -15,7 +16,7 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 import org.jfree.util.Rotation;
 
-public class Tartiflette extends ApplicationFrame {
+public class Tartiflette extends JFrame {
 
     public Tartiflette(final String title) {
         
@@ -25,6 +26,7 @@ public class Tartiflette extends ApplicationFrame {
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(750, 550));//taille de la fenêtre
         setContentPane(chartPanel);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
     }
 
@@ -33,6 +35,8 @@ public class Tartiflette extends ApplicationFrame {
         RDVDAO rdvD = new RDVDAO(SQL.getInstance());//récuperation liste RDV
 
         List<RDV> RdvList = new ArrayList<>();
+        
+        
 
         RdvList = rdvD.find();
 
@@ -107,15 +111,5 @@ public class Tartiflette extends ApplicationFrame {
         plot.setForegroundAlpha(0.7f);
         plot.setNoDataMessage("No data to display");//dans le cas ou il n'y a pas de rdv
         return chart;
-    }
-
-    public static void main(final String[] args) {
-
-        final Tartiflette fromageStat = new Tartiflette("Statistique utilisation");
-        fromageStat.pack();
-        //fromageStat.setSize(750, 550);
-        RefineryUtilities.centerFrameOnScreen(fromageStat);
-        fromageStat.setVisible(true);
-
     }
 }
