@@ -28,12 +28,16 @@ import java.sql.Time;
 import java.time.temporal.WeekFields;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -70,10 +74,10 @@ public class PanelProfil extends JFrame {
     private List<Patient> PatientList = new ArrayList<>();
     private List<RDV> RdvList = new ArrayList<>();
 
-    private int posx, posy, tempHour, row, col,row2,col2;
+    private int posx, posy, tempHour, row, col, row2, col2;
 
     private JPanel panelInfo;
-    private JLabel LnumRdv, Lnom, Lprenom, Lage, Lantecedent, Linfo, Ldate, Lheure, Lsexe,numSecu;
+    private JLabel LnumRdv, Lnom, Lprenom, Lage, Lantecedent, Linfo, Ldate, Lheure, Lsexe, numSecu;
     private JLabel numRdv, nom, prenom, age, antecedent, info, date, heure, sexe;
     private JButton deleteRdv;
     private JFrame frame;
@@ -93,12 +97,17 @@ public class PanelProfil extends JFrame {
     private JMenuItem[] speItems;
     private ArrayList<RDV> listNewRdv = new ArrayList<>();
     private int numSecuDocTemp, colorX, colorY;
-
+    private boolean researchRdv = false;
+    private JButton cancelResearch;
+    
     private Patient p;
     private JFrame frameAnte = new JFrame();
     private JPanel panelAnte = new JPanel();
     private JTextField antnew;
     private JButton update = new JButton("Update");
+
+    public PanelProfil() throws HeadlessException {
+    }
 
     public PanelProfil(Person p) {
 
@@ -244,7 +253,6 @@ public class PanelProfil extends JFrame {
         displayWelcome();
 
         tableau.addMouseListener(new Mouse());
-        
 
         profile = new JButton("Profile");
         size = profile.getPreferredSize();
@@ -264,7 +272,7 @@ public class PanelProfil extends JFrame {
 
             ArrayList<Patient> historiqueList = new ArrayList<>();
             Patient patientTemp;
-            String col[] = {"Sécurité Sociale","Nom", "Prénom", "Age", "Sexe", "Antécédants"};
+            String col[] = {"Sécurité Sociale", "Nom", "Prénom", "Age", "Sexe", "Antécédants"};
 
             String nom, prenom, sexe, ante;
             int numSecu;
@@ -333,17 +341,29 @@ public class PanelProfil extends JFrame {
         if (numSécuDocteur == 0) {
 
             addRdv = new JButton("Nouveau rendez-vous");
+            cancelResearch = new JButton("Annuler la recherche de rendez-vous");
 
             addRdv.setBackground(new java.awt.Color(102, 102, 102));
             addRdv.setFont(new java.awt.Font("Arial", 0, 12));
             addRdv.setBorderPainted(false);
             addRdv.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             addRdv.setFocusable(false);
+            
+            cancelResearch.setBackground(new java.awt.Color(102, 102, 102));
+            cancelResearch.setFont(new java.awt.Font("Arial", 0, 12));
+            cancelResearch.setBorderPainted(false);
+            cancelResearch.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            cancelResearch.setFocusable(false);
 
             size = addRdv.getSize();
             addRdv.setBounds(100 + insets.left, 300 + insets.top, 200, 30);
+            
+            size = cancelResearch.getSize();
+            cancelResearch.setBounds(100 + insets.left, 260 + insets.top, 250, 30);
+            cancelResearch.setVisible(false);
 
             panel.add(addRdv);
+            panel.add(cancelResearch);
 
             addRdvMenu = new JPopupMenu();
             doctorItems = new JMenu[DoctorList.size()];
@@ -360,6 +380,9 @@ public class PanelProfil extends JFrame {
             }
 
             addRdv.addActionListener(new ButtonListener());
+            
+           cancelResearch.addActionListener(new ButtonListener());
+
         }
 
     }
@@ -568,6 +591,9 @@ public class PanelProfil extends JFrame {
         tableau.setModel(model);
 
         displayEvent();
+        
+        if(researchRdv == true)
+            newRdv();
 
     }
 
@@ -588,6 +614,9 @@ public class PanelProfil extends JFrame {
 
         tableau.setModel(model);
         displayEvent();
+        
+        if(researchRdv == true)
+            newRdv();
 
     }
 
@@ -610,6 +639,9 @@ public class PanelProfil extends JFrame {
 
         tableau.setModel(model);
         displayEvent();
+        
+        if(researchRdv == true)
+            newRdv();
 
     }
 
@@ -943,7 +975,10 @@ public class PanelProfil extends JFrame {
             }
 
             if (RdvList.get(i).getPatient().getInsuranceNumber() == numSécuPatient) {
-                listNewRdv.add(RdvList.get(i));
+
+                if (!listNewRdv.contains(RdvList.get(i))) {
+                    listNewRdv.add(RdvList.get(i));
+                }
             }
         }
 
@@ -953,6 +988,17 @@ public class PanelProfil extends JFrame {
 
         tableau.setShowHorizontalLines(true);
         tableau.setShowVerticalLines(true);
+
+        CustomRenderer r = new CustomRenderer();
+        
+        TableColumnModel columnModel = tableau.getColumnModel();
+        int cc = columnModel.getColumnCount();
+        for (int c = 0; c < cc; c++) {
+            TableColumn column = columnModel.getColumn(c);
+            column.setCellRenderer(r);
+        }
+        
+        
 
         for (int i = 0; i < listNewRdv.size(); ++i) {
 
@@ -967,79 +1013,70 @@ public class PanelProfil extends JFrame {
 
                         colorX = k;
                         colorY = j;
-
-                        TableCellRenderer cell = tableau.getCellRenderer(colorX, colorY);
-
-                        System.out.println("Apres cell " + "X " + colorX + " Y " + colorY);
+                        
+                        r.setHighlighted(colorX, colorY, true);
 
                     }
-
-                    tableau.getColumnModel().getColumn(j).setCellRenderer(new CustomRenderer());
-
-                    //System.out.println("Apres ssprd " + "X " + colorX + " Y " + colorY);
-                    model.fireTableDataChanged();
-
-                    tableau.setModel(model);
 
                 }
             }
         }
+        
+        
+        
 
-        /*DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-
-        for (int i = 0; i < days.length; ++i) {
-            tableau.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }*/
     }
-    
+
     private class CustomRenderer extends DefaultTableCellRenderer {
 
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) 
-        {
-            Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        private final Set<Point> highlightedCells = new HashSet<Point>();
 
-            //System.out.println("Dans ssprg " + "X " + colorX + " Y " + colorY);
+        void setHighlighted(int r, int c, boolean highlighted) {
 
-            if (row == colorX && column == colorY) {
-            	
-                cellComponent.setBackground(Color.RED);
-                
-                
+            if (highlighted) {
+                highlightedCells.add(new Point(r, c));
             } else {
-                cellComponent.setBackground(Color.GREEN);
+                highlightedCells.remove(new Point(r, c));
             }
-            return cellComponent;
+        }
+
+        private boolean isHighlighted(int r, int c) {
+            return highlightedCells.contains(new Point(r, c));
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+            if (isHighlighted(row, column)) {
+                setBackground(Color.RED);
+            } else {
+                setBackground(Color.GREEN);
+            }
+            return this;
         }
     }
 
-    public void patientUpdate(int row,int col) {
-    	
+    public void patientUpdate(int row, int col) {
+
         frameAnte = new JFrame("PatientUpdate");
-        
-        
 
         setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
-        
-        	
-        
+
         JLabel Lnom = new JLabel();
-        
-        
+
         JLabel Lprenom = new JLabel();
-        
+
         JLabel Lage = new JLabel();
-        
+
         JLabel Lantecedent = new JLabel("Antécédents: ");
         Lantecedent.setBounds(25, 200, 100, 30);
-        
+
         antnew = new JTextField();
-        
+
         JLabel Lsexe = new JLabel();
-        
+
         JLabel LnumSecu = new JLabel();
         LnumSecu.setBounds(25, 300, 500, 30);
-        
+
         update.setBounds(25, 350, 100, 30);
         update.addActionListener(new ButtonListener());
 
@@ -1063,36 +1100,35 @@ public class PanelProfil extends JFrame {
 
         for (int i = 0; i < PatientList.size(); ++i) {
 
-        	String test = Integer.toString(PatientList.get(i).getInsuranceNumber());
+            String test = Integer.toString(PatientList.get(i).getInsuranceNumber());
 
-                if (test.equals(historiquePatient.getValueAt(row, col).toString())) {
-                	System.out.println(historiquePatient.getValueAt(row, col));
+            if (test.equals(historiquePatient.getValueAt(row, col).toString())) {
+                System.out.println(historiquePatient.getValueAt(row, col));
 
-                    Lnom.setText("Last Name : " + PatientList.get(i).getLastName());
-                    Lnom.setBounds(25, 50, 300, 30);
-                    
-                    Lprenom.setText("Name : " + PatientList.get(i).getName());
-                    Lprenom.setBounds(25, 100, 300, 30);
+                Lnom.setText("Last Name : " + PatientList.get(i).getLastName());
+                Lnom.setBounds(25, 50, 300, 30);
 
-                    Lage.setText("Age : " + String.valueOf(PatientList.get(i).getBorn()));
-                    Lage.setBounds(25, 150, 300, 30);
+                Lprenom.setText("Name : " + PatientList.get(i).getName());
+                Lprenom.setBounds(25, 100, 300, 30);
 
-                    Lsexe.setText("Sexe : " + PatientList.get(i).getSexe());
-                    Lsexe.setBounds(25, 250, 300, 30);
+                Lage.setText("Age : " + String.valueOf(PatientList.get(i).getBorn()));
+                Lage.setBounds(25, 150, 300, 30);
 
-                    antnew.setText(PatientList.get(i).getAntecedent());
-                    antnew.setBounds(115, 200, 400, 30);
-                    
-                    LnumSecu.setText("Insurance Number : " + String.valueOf(PatientList.get(i).getInsuranceNumber()));
-                    LnumSecu.setBounds(25, 300, 500, 30);
-                    
-                    p = new Patient(PatientList.get(i).getName(),PatientList.get(i).getLastName(),PatientList.get(i).getInsuranceNumber(),PatientList.get(i).getBorn(),PatientList.get(i).getPassWord(),PatientList.get(i).getAntecedent(),PatientList.get(i).getSexe());
-                }
-           
+                Lsexe.setText("Sexe : " + PatientList.get(i).getSexe());
+                Lsexe.setBounds(25, 250, 300, 30);
+
+                antnew.setText(PatientList.get(i).getAntecedent());
+                antnew.setBounds(115, 200, 400, 30);
+
+                LnumSecu.setText("Insurance Number : " + String.valueOf(PatientList.get(i).getInsuranceNumber()));
+                LnumSecu.setBounds(25, 300, 500, 30);
+
+                p = new Patient(PatientList.get(i).getName(), PatientList.get(i).getLastName(), PatientList.get(i).getInsuranceNumber(), PatientList.get(i).getBorn(), PatientList.get(i).getPassWord(), PatientList.get(i).getAntecedent(), PatientList.get(i).getSexe());
+
+            }
+
         }
     }
-
-   
 
     public class StatusColumnCellRenderer extends DefaultTableCellRenderer {
 
@@ -1225,16 +1261,19 @@ public class PanelProfil extends JFrame {
             if (e.getSource() == addRdv) {
                 addRdvMenu.show(addRdv, addRdv.getWidth() / 2 - 50, addRdv.getHeight());
             }
-            
+
             if (e.getSource() == update) {
-               patientDAO.update(p, antnew.getText());
-               frameAnte.dispose();
-               JOptionPane.showMessageDialog(null, "The antecedents have been updated.");
-               
+                patientDAO.update(p, antnew.getText());
+                frameAnte.dispose();
+                JOptionPane.showMessageDialog(null, "The antecedents have been updated.");
+
             }
 
             for (int i = 0; i < doctorItems.length; ++i) {
                 if (e.getSource() == speItems[i]) {
+                    
+                    researchRdv = true;
+                    cancelResearch.setVisible(true);
                     listNewRdv.clear();
                     numSecuDocTemp = DoctorList.get(i).getInsuranceNumber();
                     System.out.println("temp num " + numSecuDocTemp);
@@ -1242,26 +1281,31 @@ public class PanelProfil extends JFrame {
 
                 }
             }
+            
+            if(e.getSource() == cancelResearch)
+            {
+                researchRdv = false;
+            }
 
         }
     }
-    
+
     private class Mouse1 implements MouseListener {
 
-    	
         @Override
         public void mouseClicked(MouseEvent e) {
-        	
-        	row2 = historiquePatient.rowAtPoint(e.getPoint());
+
+            row2 = historiquePatient.rowAtPoint(e.getPoint());
 
             col2 = historiquePatient.columnAtPoint(e.getPoint());
-        
-        	if (e.getClickCount() == 2) {
+
+            if (e.getClickCount() == 2) {
                 patientUpdate(row2, col2);
                 System.out.println(row2 + " " + col2);
 
             }
         }
+
         @Override
         public void mousePressed(MouseEvent e) {
         }
@@ -1277,7 +1321,7 @@ public class PanelProfil extends JFrame {
         @Override
         public void mouseExited(MouseEvent e) {
         }
-        
+
     }
 
     private class Mouse implements MouseListener {
@@ -1288,9 +1332,6 @@ public class PanelProfil extends JFrame {
             row = tableau.rowAtPoint(e.getPoint());
 
             col = tableau.columnAtPoint(e.getPoint());
-            
-            
-            
 
             if (e.getClickCount() == 1) {
                 quickInfo(row, col);
@@ -1299,8 +1340,6 @@ public class PanelProfil extends JFrame {
             if (e.getClickCount() == 2) {
                 infoPanel(row, col);
             }
-            
-            
 
         }
 
