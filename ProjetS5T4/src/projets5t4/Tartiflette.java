@@ -16,7 +16,7 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 import org.jfree.util.Rotation;
 
-public class Tartiflette extends ApplicationFrame {
+public class Tartiflette extends JFrame {
 
     public Tartiflette(final String title) {
         
@@ -26,6 +26,7 @@ public class Tartiflette extends ApplicationFrame {
         final ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(750, 550));//taille de la fenêtre
         setContentPane(chartPanel);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
     }
 
@@ -35,7 +36,7 @@ public class Tartiflette extends ApplicationFrame {
 
         List<RDV> RdvList = new ArrayList<>();
         
-        setDefaultCloseOperation(ApplicationFrame.DISPOSE_ON_CLOSE);
+        
 
         RdvList = rdvD.find();
 

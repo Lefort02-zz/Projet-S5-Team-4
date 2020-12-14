@@ -280,13 +280,17 @@ public class PanelProfil extends JFrame {
 
         profileMenu = new JPopupMenu();
         profileMenu.add(profileMenuItem = new JMenuItem("Profile"));
+        if (numSécuPatient == 0) {
+            profileMenu.add(statMenuItem = new JMenuItem("Statistiques"));
+
+            statMenuItem.addActionListener(new ButtonListener());
+
+        }
         profileMenu.add(logoutMenuItem = new JMenuItem("Logout"));
-        profileMenu.add(statMenuItem = new JMenuItem("Statistiques"));
 
         profile.addActionListener(new ButtonListener());
         profileMenuItem.addActionListener(new ButtonListener());
         logoutMenuItem.addActionListener(new ButtonListener());
-        statMenuItem.addActionListener(new ButtonListener());
 
         if (numSécuPatient == 0) {
 
@@ -1203,6 +1207,8 @@ public class PanelProfil extends JFrame {
     public void patientUpdate(int row, int col) {
 
         frameAnte = new JFrame("PatientUpdate");
+        
+        frameAnte.removeAll();
 
         setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 
