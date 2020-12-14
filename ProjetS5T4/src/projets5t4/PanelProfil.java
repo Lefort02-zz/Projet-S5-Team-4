@@ -792,7 +792,7 @@ public class PanelProfil extends JFrame {
 
         welcome.setFont(new Font("Arial", Font.BOLD, 20));
         Dimension size = welcome.getPreferredSize();
-        welcome.setBounds(800 + insetsW.left, 10 + insetsW.top, size.width + 50, size.height);
+        welcome.setBounds(825 + insetsW.left, 150 + insetsW.top, size.width + 50, size.height);
 
         panel.add(welcome);
 
