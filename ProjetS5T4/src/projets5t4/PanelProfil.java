@@ -25,15 +25,25 @@ import java.awt.font.TextAttribute;
 import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -70,10 +80,10 @@ public class PanelProfil extends JFrame {
     private List<Patient> PatientList = new ArrayList<>();
     private List<RDV> RdvList = new ArrayList<>();
 
-    private int posx, posy, tempHour, row, col,row2,col2;
+    private int posx, posy, tempHour, row, col, row2, col2;
 
     private JPanel panelInfo;
-    private JLabel LnumRdv, Lnom, Lprenom, Lage, Lantecedent, Linfo, Ldate, Lheure, Lsexe,numSecu;
+    private JLabel LnumRdv, Lnom, Lprenom, Lage, Lantecedent, Linfo, Ldate, Lheure, Lsexe, numSecu;
     private JLabel numRdv, nom, prenom, age, antecedent, info, date, heure, sexe;
     private JButton deleteRdv;
     private JFrame frame;
@@ -93,12 +103,24 @@ public class PanelProfil extends JFrame {
     private JMenuItem[] speItems;
     private ArrayList<RDV> listNewRdv = new ArrayList<>();
     private int numSecuDocTemp, colorX, colorY;
+    private boolean researchRdv = false;
+    private JButton cancelResearch;
 
     private Patient p;
     private JFrame frameAnte = new JFrame();
     private JPanel panelAnte = new JPanel();
     private JTextField antnew;
     private JButton update = new JButton("Update");
+
+    private RDV rdvNew;
+    private JFrame popNewRdvFrame = new JFrame();
+    private JPanel panelNewRdv = new JPanel();
+    private JTextField raisonField;
+    private JButton validerButton = new JButton("Valider le rendez-vous");
+    private int row3, col3;
+
+    public PanelProfil() throws HeadlessException {
+    }
 
     public PanelProfil(Person p) {
 
@@ -246,7 +268,6 @@ public class PanelProfil extends JFrame {
         displayWelcome();
 
         tableau.addMouseListener(new Mouse());
-        
 
         profile = new JButton("Profile");
         profile.setBackground(new java.awt.Color(18, 92, 117));
@@ -268,7 +289,7 @@ public class PanelProfil extends JFrame {
 
             ArrayList<Patient> historiqueList = new ArrayList<>();
             Patient patientTemp;
-            String col[] = {"Sécurité Sociale","Nom", "Prénom", "Age", "Sexe", "Antécédants"};
+            String col[] = {"Sécurité Sociale", "Nom", "Prénom", "Age", "Sexe", "Antécédants"};
 
             String nom, prenom, sexe, ante;
             int numSecu;
@@ -337,6 +358,7 @@ public class PanelProfil extends JFrame {
         if (numSécuDocteur == 0) {
 
             addRdv = new JButton("Nouveau rendez-vous");
+            cancelResearch = new JButton("Annuler la recherche de rendez-vous");
 
             addRdv.setBackground(new java.awt.Color(18, 92, 117));
             addRdv.setFont(new java.awt.Font("Arial", 0, 12));
@@ -345,10 +367,21 @@ public class PanelProfil extends JFrame {
             addRdv.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             addRdv.setFocusable(false);
 
+            cancelResearch.setBackground(new java.awt.Color(102, 102, 102));
+            cancelResearch.setFont(new java.awt.Font("Arial", 0, 12));
+            cancelResearch.setBorderPainted(false);
+            cancelResearch.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            cancelResearch.setFocusable(false);
+
             size = addRdv.getSize();
             addRdv.setBounds(100 + insets.left, 300 + insets.top, 200, 30);
 
+            size = cancelResearch.getSize();
+            cancelResearch.setBounds(100 + insets.left, 260 + insets.top, 250, 30);
+            cancelResearch.setVisible(false);
+
             panel.add(addRdv);
+            panel.add(cancelResearch);
 
             addRdvMenu = new JPopupMenu();
             doctorItems = new JMenu[DoctorList.size()];
@@ -365,6 +398,13 @@ public class PanelProfil extends JFrame {
             }
 
             addRdv.addActionListener(new ButtonListener());
+
+            cancelResearch.addActionListener(new ButtonListener());
+
+        }
+
+        for (int i = 0; i < RdvList.size(); ++i) {
+            System.out.println(RdvList.get(i).getNumberRDV());
         }
 
     }
@@ -577,6 +617,10 @@ public class PanelProfil extends JFrame {
 
         displayEvent();
 
+        if (researchRdv == true) {
+            newRdv();
+        }
+
     }
 
     public void setPreviousWeek() {
@@ -596,6 +640,10 @@ public class PanelProfil extends JFrame {
 
         tableau.setModel(model);
         displayEvent();
+
+        if (researchRdv == true) {
+            newRdv();
+        }
 
     }
 
@@ -618,6 +666,10 @@ public class PanelProfil extends JFrame {
 
         tableau.setModel(model);
         displayEvent();
+
+        if (researchRdv == true) {
+            newRdv();
+        }
 
     }
 
@@ -952,7 +1004,10 @@ public class PanelProfil extends JFrame {
             }
 
             if (RdvList.get(i).getPatient().getInsuranceNumber() == numSécuPatient) {
-                listNewRdv.add(RdvList.get(i));
+
+                if (!listNewRdv.contains(RdvList.get(i))) {
+                    listNewRdv.add(RdvList.get(i));
+                }
             }
         }
 
@@ -962,6 +1017,15 @@ public class PanelProfil extends JFrame {
 
         tableau.setShowHorizontalLines(true);
         tableau.setShowVerticalLines(true);
+
+        CustomRenderer r = new CustomRenderer();
+
+        TableColumnModel columnModel = tableau.getColumnModel();
+        int cc = columnModel.getColumnCount();
+        for (int c = 0; c < cc; c++) {
+            TableColumn column = columnModel.getColumn(c);
+            column.setCellRenderer(r);
+        }
 
         for (int i = 0; i < listNewRdv.size(); ++i) {
 
@@ -977,77 +1041,188 @@ public class PanelProfil extends JFrame {
                         colorX = k;
                         colorY = j;
 
-                        TableCellRenderer cell = tableau.getCellRenderer(colorX, colorY);  
-                        
+                        r.setHighlighted(colorX, colorY, true);
+
                     }
-
-                    tableau.getColumnModel().getColumn(j).setCellRenderer(new CustomRenderer());
-                    System.out.println("Apres cell " + "X " + colorX + " Y " + colorY);
-
-                    model.fireTableDataChanged();
-
-                    tableau.setModel(model);
 
                 }
             }
         }
-        
-        /*DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-
-        for (int i = 0; i < days.length; ++i) {
-            tableau.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }*/
 
     }
-    
-    private class CustomRenderer extends DefaultTableCellRenderer {
 
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) 
-        {
-            Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    public void newRdvPopup(int row, int col) {
 
-            //System.out.println("Dans ssprg " + "X " + colorX + " Y " + colorY);
+        popNewRdvFrame = new JFrame("Nouveaux rendez-vous");
 
-            if (row == colorX && column == colorY) {
-            	
-                cellComponent.setBackground(Color.RED);
-                
-                
-            } else {
-                cellComponent.setBackground(Color.GREEN);
+        panelNewRdv.removeAll();
+
+        setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
+
+        JLabel Lnom = new JLabel();
+
+        JLabel Lprenom = new JLabel();
+
+        JLabel Lage = new JLabel();
+
+        JLabel Lraison = new JLabel("Raison du rendez-vous: ");
+        Lraison.setBounds(25, 200, 200, 30);
+
+        raisonField = new JTextField("raison");
+
+        JLabel Lsexe = new JLabel();
+
+        JLabel LnumRdv = new JLabel();
+
+        JLabel LnumSecu = new JLabel();
+        LnumSecu.setBounds(25, 300, 500, 30);
+
+        JLabel Ldate = new JLabel();
+        JLabel Lheure = new JLabel();
+
+        validerButton.setBounds(200, 450, 200, 30);
+        validerButton.addActionListener(new ButtonListener());
+
+        panelNewRdv.add(Lnom);
+        panelNewRdv.add(Lprenom);
+        panelNewRdv.add(Lage);
+        panelNewRdv.add(Lraison);
+        panelNewRdv.add(raisonField);
+        panelNewRdv.add(Lsexe);
+        panelNewRdv.add(LnumSecu);
+        panelNewRdv.add(Ldate);
+        panelNewRdv.add(Lheure);
+        panelNewRdv.add(LnumRdv);
+        panelNewRdv.add(validerButton);
+
+        validerButton.addActionListener(new ButtonListener());
+
+        panelNewRdv.setLayout(null);
+
+        popNewRdvFrame.add(panelNewRdv);
+        panelNewRdv.setVisible(true);
+
+        popNewRdvFrame.setSize(600, 550);
+        popNewRdvFrame.setLocationRelativeTo(null);
+        popNewRdvFrame.setVisible(true);
+
+        int intRdv = 0;
+        String newNumRdvString;
+
+        for (int k = 0; k < RdvList.size(); ++k) {
+            intRdv = Integer.parseInt(RdvList.get(k).getNumberRDV().substring(3));
+        }
+
+        intRdv += 1;
+
+        newNumRdvString = "RDV" + String.valueOf(intRdv);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d MMMM yyyy");
+        LocalDate dateTime = LocalDate.parse(days[col], formatter);
+        
+        System.out.println(dateTime);
+
+        Doctor d = new Doctor();
+
+        for (int l = 0; l < DoctorList.size(); ++l) {
+            if (numSecuDocTemp == DoctorList.get(l).getInsuranceNumber()) {
+                d = DoctorList.get(l);
             }
-            return cellComponent;
+        }
+
+        for (int i = 0; i < PatientList.size(); ++i) {
+
+            if (PatientList.get(i).getInsuranceNumber() == numSécuPatient) {
+
+                LnumRdv.setText("Numéro de rendez-vous: " + newNumRdvString);
+                LnumRdv.setBounds(25, 0, 300, 30);
+
+                Lnom.setText("Last Name : " + PatientList.get(i).getLastName());
+                Lnom.setBounds(25, 50, 300, 30);
+
+                Lprenom.setText("Name : " + PatientList.get(i).getName());
+                Lprenom.setBounds(25, 100, 300, 30);
+
+                Lage.setText("Age : " + String.valueOf(PatientList.get(i).getBorn()) + " ans");
+                Lage.setBounds(25, 150, 300, 30);
+
+                Lsexe.setText("Sexe : " + PatientList.get(i).getSexe());
+                Lsexe.setBounds(25, 250, 300, 30);
+
+                raisonField.setBounds(155, 200, 400, 30);
+                
+
+                LnumSecu.setText("Insurance Number : " + String.valueOf(PatientList.get(i).getInsuranceNumber()));
+                LnumSecu.setBounds(25, 300, 500, 30);
+
+                Ldate.setText("Date: " + days[col]);
+                Ldate.setBounds(25, 350, 500, 30);
+
+                Lheure.setText("Heure: " + time[row]);
+                Lheure.setBounds(25, 400, 500, 30);
+                
+                
+                
+                String raison = raisonField.getText();
+                
+                System.out.println(raison);
+
+                rdvNew = new RDV(d, PatientList.get(i), Date.valueOf(dateTime), Time.valueOf(time[row]), raison, newNumRdvString);
+            }
+
         }
     }
 
-    public void patientUpdate(int row,int col) {
-    	
+    private class CustomRenderer extends DefaultTableCellRenderer {
+
+        private final Set<Point> highlightedCells = new HashSet<Point>();
+
+        void setHighlighted(int r, int c, boolean highlighted) {
+
+            if (highlighted) {
+                highlightedCells.add(new Point(r, c));
+            } else {
+                highlightedCells.remove(new Point(r, c));
+            }
+        }
+
+        private boolean isHighlighted(int r, int c) {
+            return highlightedCells.contains(new Point(r, c));
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+            if (isHighlighted(row, column)) {
+                setBackground(Color.RED);
+            } else {
+                setBackground(Color.GREEN);
+            }
+            return this;
+        }
+    }
+
+    public void patientUpdate(int row, int col) {
+
         frameAnte = new JFrame("PatientUpdate");
-        
-        
 
         setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
-        
-        	
-        
+
         JLabel Lnom = new JLabel();
-        
-        
+
         JLabel Lprenom = new JLabel();
-        
+
         JLabel Lage = new JLabel();
-        
+
         JLabel Lantecedent = new JLabel("Antécédents: ");
         Lantecedent.setBounds(25, 200, 100, 30);
-        
+
         antnew = new JTextField();
-        
+
         JLabel Lsexe = new JLabel();
-        
+
         JLabel LnumSecu = new JLabel();
         LnumSecu.setBounds(25, 300, 500, 30);
-        
+
         update.setBounds(25, 350, 100, 30);
         update.addActionListener(new ButtonListener());
 
@@ -1071,36 +1246,35 @@ public class PanelProfil extends JFrame {
 
         for (int i = 0; i < PatientList.size(); ++i) {
 
-        	String test = Integer.toString(PatientList.get(i).getInsuranceNumber());
+            String test = Integer.toString(PatientList.get(i).getInsuranceNumber());
 
-                if (test.equals(historiquePatient.getValueAt(row, col).toString())) {
-                	System.out.println(historiquePatient.getValueAt(row, col));
+            if (test.equals(historiquePatient.getValueAt(row, col).toString())) {
+                System.out.println(historiquePatient.getValueAt(row, col));
 
-                    Lnom.setText("Last Name : " + PatientList.get(i).getLastName());
-                    Lnom.setBounds(25, 50, 300, 30);
-                    
-                    Lprenom.setText("Name : " + PatientList.get(i).getName());
-                    Lprenom.setBounds(25, 100, 300, 30);
+                Lnom.setText("Last Name : " + PatientList.get(i).getLastName());
+                Lnom.setBounds(25, 50, 300, 30);
 
-                    Lage.setText("Age : " + String.valueOf(PatientList.get(i).getBorn()));
-                    Lage.setBounds(25, 150, 300, 30);
+                Lprenom.setText("Name : " + PatientList.get(i).getName());
+                Lprenom.setBounds(25, 100, 300, 30);
 
-                    Lsexe.setText("Sexe : " + PatientList.get(i).getSexe());
-                    Lsexe.setBounds(25, 250, 300, 30);
+                Lage.setText("Age : " + String.valueOf(PatientList.get(i).getBorn()));
+                Lage.setBounds(25, 150, 300, 30);
 
-                    antnew.setText(PatientList.get(i).getAntecedent());
-                    antnew.setBounds(115, 200, 400, 30);
-                    
-                    LnumSecu.setText("Insurance Number : " + String.valueOf(PatientList.get(i).getInsuranceNumber()));
-                    LnumSecu.setBounds(25, 300, 500, 30);
-                    
-                    p = new Patient(PatientList.get(i).getName(),PatientList.get(i).getLastName(),PatientList.get(i).getInsuranceNumber(),PatientList.get(i).getBorn(),PatientList.get(i).getPassWord(),PatientList.get(i).getAntecedent(),PatientList.get(i).getSexe());
-                }
-           
+                Lsexe.setText("Sexe : " + PatientList.get(i).getSexe());
+                Lsexe.setBounds(25, 250, 300, 30);
+
+                antnew.setText(PatientList.get(i).getAntecedent());
+                antnew.setBounds(115, 200, 400, 30);
+
+                LnumSecu.setText("Insurance Number : " + String.valueOf(PatientList.get(i).getInsuranceNumber()));
+                LnumSecu.setBounds(25, 300, 500, 30);
+
+                p = new Patient(PatientList.get(i).getName(), PatientList.get(i).getLastName(), PatientList.get(i).getInsuranceNumber(), PatientList.get(i).getBorn(), PatientList.get(i).getPassWord(), PatientList.get(i).getAntecedent(), PatientList.get(i).getSexe());
+
+            }
+
         }
     }
-
-   
 
     public class StatusColumnCellRenderer extends DefaultTableCellRenderer {
 
@@ -1233,43 +1407,65 @@ public class PanelProfil extends JFrame {
             if (e.getSource() == addRdv) {
                 addRdvMenu.show(addRdv, addRdv.getWidth() / 2 - 50, addRdv.getHeight());
             }
-            
+
             if (e.getSource() == update) {
-               patientDAO.update(p, antnew.getText());
-               frameAnte.dispose();
-               JOptionPane.showMessageDialog(null, "The antecedents have been updated.");
-               
+                patientDAO.update(p, antnew.getText());
+                frameAnte.dispose();
+                JOptionPane.showMessageDialog(null, "The antecedents have been updated.");
+
             }
 
             for (int i = 0; i < doctorItems.length; ++i) {
                 if (e.getSource() == speItems[i]) {
+
+                    researchRdv = true;
+                    cancelResearch.setVisible(true);
                     listNewRdv.clear();
                     numSecuDocTemp = DoctorList.get(i).getInsuranceNumber();
                     System.out.println("temp num " + numSecuDocTemp);
                     newRdv();
-
                 }
+            }
+
+            if (e.getSource() == cancelResearch) {
+                panel.repaint();
+                researchRdv = false;
+                displayEvent();
+                cancelResearch.setVisible(false);
+                
+            }
+
+            if (e.getSource() == validerButton) {
+                rdvDao.create(rdvNew);
+                
+                panel.repaint();
+                researchRdv = false;
+                cancelResearch.setVisible(false);
+                
+                displayEvent();
+                popNewRdvFrame.dispose();
+                JOptionPane.showMessageDialog(null, "Le rendez-vous a bien été ajouté à votre emploi du temps");
             }
 
         }
     }
-    
+
     private class Mouse1 implements MouseListener {
 
-    	
         @Override
         public void mouseClicked(MouseEvent e) {
-        	
-        	row2 = historiquePatient.rowAtPoint(e.getPoint());
+
+            row2 = historiquePatient.rowAtPoint(e.getPoint());
 
             col2 = historiquePatient.columnAtPoint(e.getPoint());
-        
-        	if (e.getClickCount() == 2) {
+
+            if (e.getClickCount() == 2) {
                 patientUpdate(row2, col2);
                 System.out.println(row2 + " " + col2);
 
             }
         }
+
         @Override
         public void mousePressed(MouseEvent e) {
         }
@@ -1285,7 +1481,7 @@ public class PanelProfil extends JFrame {
         @Override
         public void mouseExited(MouseEvent e) {
         }
-        
+
     }
 
     private class Mouse implements MouseListener {
@@ -1296,19 +1492,29 @@ public class PanelProfil extends JFrame {
             row = tableau.rowAtPoint(e.getPoint());
 
             col = tableau.columnAtPoint(e.getPoint());
-            
-            
-            
 
-            if (e.getClickCount() == 1) {
-                quickInfo(row, col);
-            }
+            if (researchRdv == false) {
+                if (e.getClickCount() == 1) {
+                    quickInfo(row, col);
+                }
 
-            if (e.getClickCount() == 2) {
-                infoPanel(row, col);
+                if (e.getClickCount() == 2) {
+                    infoPanel(row, col);
+                }
             }
-            
-            
+            if (researchRdv == true) {
+
+                TableCellRenderer renderer = tableau.getCellRenderer(row, col);
+                Component c = tableau.prepareRenderer(renderer, row, col);
+                System.out.println(c.getBackground());
+
+                if (c.getBackground() == Color.RED) {
+                    JOptionPane.showMessageDialog(null, "Impossible de réserver un rendez-vous sur ce créneau horaire !");
+                }
+                if (c.getBackground() == Color.GREEN) {
+                    newRdvPopup(row, col);
+                }
+            }
 
         }
 

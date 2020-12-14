@@ -27,7 +27,7 @@ public class RDVDAO extends DAO<RDV> {
 
         try {
 
-            String sql = "INSERT INTO rdv (Num�roRDV, numS�cuDocteur, numS�cuPatient, Date, Horaire, raison) VALUES (?,?,?,?,?,?)";
+            String sql = "INSERT INTO rdv (NuméroRDV, numSécuDocteur, numSécuPatient, Date, Horaire, raison) VALUES (?,?,?,?,?,?)";
             PreparedStatement statementRDV = this.connect.prepareStatement(sql);
             statementRDV.setString(1, obj.getNumberRDV());
             statementRDV.setInt(2, obj.getDoctor().getInsuranceNumber());
@@ -56,7 +56,7 @@ public class RDVDAO extends DAO<RDV> {
           try {
 
             Statement stmt = this.connect.createStatement();
-            stmt.execute("DELETE FROM rdv WHERE num�roRDV = \"" + numRdv + "\"");
+            stmt.execute("DELETE FROM rdv WHERE numéroRDV = \"" + numRdv + "\"");
 
             stmt.close();
 
