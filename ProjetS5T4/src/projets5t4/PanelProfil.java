@@ -96,7 +96,8 @@ public class PanelProfil extends JFrame {
 
         // Specify what happens when the close button is clicked.
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        
+        panel.setBackground(new Color(142,201,222));
         // Build the panel and add it to the frame.
         buildPanel();
 
@@ -109,7 +110,7 @@ public class PanelProfil extends JFrame {
     private void buildPanel() {
 
         panel = new JPanel();
-
+        panel.setBackground(new Color(142,201,222));
         hours = new JList(time);
 
         quickInfo = new JLabel();

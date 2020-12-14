@@ -22,7 +22,7 @@ public class SQL {
             
             String url = "jdbc:mysql://127.0.0.1:3306/projets5?useSSL=false";
             String user = "root";
-            String password = "Lagardere1202";
+            String password = "apermoSQL990404&*";
             
             conn=DriverManager.getConnection(url, user, password);
             
