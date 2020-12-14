@@ -44,6 +44,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import org.jfree.ui.RefineryUtilities;
 
 /**
  *
@@ -91,7 +92,7 @@ public class PanelProfil extends JFrame {
 
     private JButton profile;
     private JPopupMenu profileMenu;
-    private JMenuItem logoutMenuItem, profileMenuItem;
+    private JMenuItem logoutMenuItem, profileMenuItem, statMenuItem;
     private JButton deleteAccount;
 
     private JTable historiquePatient;
@@ -134,7 +135,6 @@ public class PanelProfil extends JFrame {
 
         // Set the window title.
         setTitle("Profil");
-
 
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -281,10 +281,12 @@ public class PanelProfil extends JFrame {
         profileMenu = new JPopupMenu();
         profileMenu.add(profileMenuItem = new JMenuItem("Profile"));
         profileMenu.add(logoutMenuItem = new JMenuItem("Logout"));
+        profileMenu.add(statMenuItem = new JMenuItem("Statistiques"));
 
         profile.addActionListener(new ButtonListener());
         profileMenuItem.addActionListener(new ButtonListener());
         logoutMenuItem.addActionListener(new ButtonListener());
+        statMenuItem.addActionListener(new ButtonListener());
 
         if (numSécuPatient == 0) {
 
@@ -615,7 +617,6 @@ public class PanelProfil extends JFrame {
 
         tableau.setModel(model);
 
-
         displayEvent();
 
         if (researchRdv == true) {
@@ -864,7 +865,7 @@ public class PanelProfil extends JFrame {
         size = deleteAccount.getPreferredSize();
         deleteAccount.setBounds(150 + insetsD.left, 400 + insetsD.top, size.width + 100, size.height);
         deleteAccount.setFocusable(false);
-        deleteAccount.setBackground(new java.awt.Color(178,34,34));
+        deleteAccount.setBackground(new java.awt.Color(178, 34, 34));
         deleteAccount.setForeground(Color.white);
         deleteAccount.addActionListener(new ButtonListener());
 
@@ -1152,7 +1153,6 @@ public class PanelProfil extends JFrame {
 
                 raisonField.setBounds(155, 200, 400, 30);
 
-
                 LnumSecu.setText("Insurance Number : " + String.valueOf(PatientList.get(i).getInsuranceNumber()));
                 LnumSecu.setBounds(25, 300, 500, 30);
 
@@ -1161,8 +1161,6 @@ public class PanelProfil extends JFrame {
 
                 Lheure.setText("Heure: " + time[row]);
                 Lheure.setBounds(25, 400, 500, 30);
-
-
 
                 String raison = raisonField.getText();
 
@@ -1376,6 +1374,13 @@ public class PanelProfil extends JFrame {
                 System.out.println("Profile popup");
                 profilePopup();
             }
+            if (e.getSource() == statMenuItem) {
+                final Tartiflette fromageStat = new Tartiflette("Statistique utilisation");
+                fromageStat.pack();
+                //fromageStat.setSize(750, 550);
+                RefineryUtilities.centerFrameOnScreen(fromageStat);
+                fromageStat.setVisible(true);
+            }
 
             if (e.getSource() == deleteAccount) {
 
@@ -1536,13 +1541,6 @@ public class PanelProfil extends JFrame {
         @Override
         public void mouseExited(MouseEvent e) {
         }
-
-    }
-
-    public static void main(String args[]) {
-
-    	PanelProfil calendrier = new PanelProfil(new Patient("gerome","glant",1551547,12,"15151","null","male"));
-
 
     }
 }
