@@ -46,10 +46,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import org.jfree.ui.RefineryUtilities;
 
-/**
- *
- * @author Gaspard Lefort-Louet
- */
+
 public class PanelProfil extends JFrame {
 
     private JTable tableau;
@@ -57,6 +54,15 @@ public class PanelProfil extends JFrame {
     private JButton nextWeek, previousWeek, actualWeek;
     private DefaultTableModel model;
     private JList hours;
+
+    private JTextField raisonField = new JTextField(50);
+
+    private Patient pat;
+    private Doctor d;
+    private LocalDate dateRDV;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d MMMM yyyy");
+    private String raisonRDV;
+    String newNumRdvString;
 
     private final LocalTime startDay = LocalTime.of(8, 0);
     private final LocalTime endDay = LocalTime.of(19, 0);
@@ -116,10 +122,10 @@ public class PanelProfil extends JFrame {
     private RDV rdvNew;
     private JFrame popNewRdvFrame = new JFrame();
     private JPanel panelNewRdv = new JPanel();
-    private JTextField raisonField;
-    private JButton validerButton = new JButton("Valider le rendez-vous");
+
+
     private int row3, col3;
-    
+
     private JLabel logo;
 
     public PanelProfil() throws HeadlessException {
@@ -415,14 +421,14 @@ public class PanelProfil extends JFrame {
         for (int i = 0; i < RdvList.size(); ++i) {
             System.out.println(RdvList.get(i).getNumberRDV());
         }
-        
+
         logo = new JLabel();
-        
+
         logo.setIcon(new javax.swing.ImageIcon("C:\\Users\\Gaspard Lefort-Louet\\iCloudDrive\\Desktop\\Github\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\logo 2.jpg")); // NOI18N
 
         size = logo.getPreferredSize();
         logo.setBounds(750, 10, size.width, 50);
-        
+
         panel.add(logo);
 
     }
@@ -1070,86 +1076,99 @@ public class PanelProfil extends JFrame {
 
     public void newRdvPopup(int row, int col) {
 
+    	panelNewRdv.removeAll();
         popNewRdvFrame = new JFrame("Nouveaux rendez-vous");
-
-        panelNewRdv.removeAll();
 
         setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 
-        JLabel Lnom = new JLabel();
 
-        JLabel Lprenom = new JLabel();
 
-        JLabel Lage = new JLabel();
+        int intRdv = 0;
+        int intfinal =0;
 
-        JLabel Lraison = new JLabel("Raison du rendez-vous: ");
+
+	        for (int k = 0; k < RdvList.size(); ++k)
+	        {
+	            intRdv = Integer.parseInt(RdvList.get(k).getNumberRDV().substring(3));
+
+	            if(intRdv > intfinal)
+	            	intfinal=intRdv;
+	        }
+
+       intfinal++;
+
+        newNumRdvString = "RDV" + String.valueOf(intfinal);
+
+
+
+        for (int i = 0; i < PatientList.size(); ++i)
+        {
+
+            if (PatientList.get(i).getInsuranceNumber() == numSécuPatient)
+            {
+
+            	pat = PatientList.get(i);
+            }
+        }
+
+
+
+        JLabel Lnom = new JLabel("Last Name : " + pat.getLastName());
+        Lnom.setBounds(25, 50, 300, 30);
+        JLabel Lprenom = new JLabel("Name : " + pat.getName());
+        Lprenom.setBounds(25, 100, 300, 30);
+        JLabel Lage = new JLabel("Age : " + String.valueOf(pat.getBorn()) + " ans");
+        Lage.setBounds(25, 150, 300, 30);
+        JLabel Lraison = new JLabel("Raison du rendez-vous : ");
         Lraison.setBounds(25, 200, 200, 30);
 
-        raisonField = new JTextField("raison");
+        ////////////////////////////////////textfield error
+        raisonField.setBounds(25, 250, 400, 30);
+        JLabel Lsexe = new JLabel("Sexe : " + pat.getSexe());
+        Lsexe.setBounds(25, 300, 300, 30);
+        JLabel LnumRdv = new JLabel("Numéro de rendez-vous : " + newNumRdvString);
+        LnumRdv.setBounds(25, 350, 300, 30);
+        JLabel LnumSecu = new JLabel("Insurance Number : " + String.valueOf(pat.getInsuranceNumber()));
+        LnumSecu.setBounds(25, 400, 500, 30);
 
-        JLabel Lsexe = new JLabel();
+        JLabel Ldate = new JLabel("Date: " + days[col]);
+        Ldate.setBounds(25, 450, 500, 30);
+        JLabel Lheure = new JLabel("Heure: " + time[row]);
+        Lheure.setBounds(25, 500, 500, 30);
 
-        JLabel LnumRdv = new JLabel();
+        JButton validerButton = new JButton("Valider le rendez-vous");
+        validerButton.setBounds(25, 550, 200, 30);
+        validerButton.addActionListener(new ButtonListener1());
 
-        JLabel LnumSecu = new JLabel();
-        LnumSecu.setBounds(25, 300, 500, 30);
 
-        JLabel Ldate = new JLabel();
-        JLabel Lheure = new JLabel();
+        popNewRdvFrame.add(Lnom);
+        popNewRdvFrame.add(Lprenom);
+        popNewRdvFrame.add(Lage);
+        popNewRdvFrame.add(Lraison);
+        popNewRdvFrame.add(raisonField);
+        popNewRdvFrame.add(Lsexe);
+        popNewRdvFrame.add(LnumSecu);
+        popNewRdvFrame.add(Ldate);
+        popNewRdvFrame.add(Lheure);
+        popNewRdvFrame.add(LnumRdv);
+        popNewRdvFrame.add(validerButton);
 
-        validerButton.setBounds(200, 450, 200, 30);
-        validerButton.addActionListener(new ButtonListener());
-
-        panelNewRdv.add(Lnom);
-        panelNewRdv.add(Lprenom);
-        panelNewRdv.add(Lage);
-        panelNewRdv.add(Lraison);
-        panelNewRdv.add(raisonField);
-        panelNewRdv.add(Lsexe);
-        panelNewRdv.add(LnumSecu);
-        panelNewRdv.add(Ldate);
-        panelNewRdv.add(Lheure);
-        panelNewRdv.add(LnumRdv);
-        panelNewRdv.add(validerButton);
-
-        validerButton.addActionListener(new ButtonListener());
-
-        panelNewRdv.setLayout(null);
-
-        popNewRdvFrame.add(panelNewRdv);
-        panelNewRdv.setVisible(true);
-
-        popNewRdvFrame.setSize(600, 550);
+        popNewRdvFrame.setLayout(null);
+        popNewRdvFrame.setSize(500, 700);
         popNewRdvFrame.setLocationRelativeTo(null);
         popNewRdvFrame.setVisible(true);
 
-        int intRdv = 0;
-        String newNumRdvString;
-
-        for (int k = 0; k < RdvList.size(); ++k) {
-            intRdv = Integer.parseInt(RdvList.get(k).getNumberRDV().substring(3));
-        }
-
-        intRdv += 1;
-
-        newNumRdvString = "RDV" + String.valueOf(intRdv);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d MMMM yyyy");
-        LocalDate dateTime = LocalDate.parse(days[col], formatter);
-
-        System.out.println(dateTime);
-
-        Doctor d = new Doctor();
-
-        for (int l = 0; l < DoctorList.size(); ++l) {
-            if (numSecuDocTemp == DoctorList.get(l).getInsuranceNumber()) {
+        for (int l = 0; l < DoctorList.size(); ++l)
+        {
+            if (numSecuDocTemp == DoctorList.get(l).getInsuranceNumber())
+            {
                 d = DoctorList.get(l);
             }
         }
 
-        for (int i = 0; i < PatientList.size(); ++i) {
 
-            if (PatientList.get(i).getInsuranceNumber() == numSécuPatient) {
+        raisonRDV = raisonField.getText();
+        dateRDV = LocalDate.parse(days[col], formatter);
 
                 LnumRdv.setText("Numéro de rendez-vous: " + newNumRdvString);
                 LnumRdv.setBounds(25, 0, 300, 30);
@@ -1179,13 +1198,21 @@ public class PanelProfil extends JFrame {
 
                 String raison = raisonField.getText();
 
-                System.out.println(raison);
+        @Override
+        public void actionPerformed(ActionEvent e) {
 
-                rdvNew = new RDV(d, PatientList.get(i), Date.valueOf(dateTime), Time.valueOf(time[row]), raison, newNumRdvString);
-            }
+        	rdvDao.create(new RDV(d, pat, Date.valueOf(dateRDV), Time.valueOf(time[row]), String.valueOf(raisonField.getText()), newNumRdvString));
+
+            panel.repaint();
+            researchRdv = false;
+            cancelResearch.setVisible(false);
+
+            displayEvent();
+            popNewRdvFrame.dispose();
+            JOptionPane.showMessageDialog(null,"Le rendez-vous a bien été ajouté à votre emploi du temps");
 
         }
-    }
+        }
 
     private class CustomRenderer extends DefaultTableCellRenderer {
 
@@ -1218,7 +1245,7 @@ public class PanelProfil extends JFrame {
     public void patientUpdate(int row, int col) {
 
         frameAnte = new JFrame("PatientUpdate");
-        
+
         frameAnte.removeAll();
 
         setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
@@ -1349,6 +1376,8 @@ public class PanelProfil extends JFrame {
         }
     }
 
+
+
     private class ButtonListener implements ActionListener {
 
         @Override
@@ -1460,17 +1489,7 @@ public class PanelProfil extends JFrame {
 
             }
 
-            if (e.getSource() == validerButton) {
-                rdvDao.create(rdvNew);
 
-                panel.repaint();
-                researchRdv = false;
-                cancelResearch.setVisible(false);
-
-                displayEvent();
-                popNewRdvFrame.dispose();
-                JOptionPane.showMessageDialog(null, "Le rendez-vous a bien été ajouté à votre emploi du temps");
-            }
 
         }
     }
