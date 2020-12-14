@@ -119,6 +119,8 @@ public class PanelProfil extends JFrame {
     private JTextField raisonField;
     private JButton validerButton = new JButton("Valider le rendez-vous");
     private int row3, col3;
+    
+    private JLabel logo;
 
     public PanelProfil() throws HeadlessException {
     }
@@ -413,6 +415,15 @@ public class PanelProfil extends JFrame {
         for (int i = 0; i < RdvList.size(); ++i) {
             System.out.println(RdvList.get(i).getNumberRDV());
         }
+        
+        logo = new JLabel();
+        
+        logo.setIcon(new javax.swing.ImageIcon("C:\\Users\\Gaspard Lefort-Louet\\iCloudDrive\\Desktop\\Github\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\logo 2.jpg")); // NOI18N
+
+        size = logo.getPreferredSize();
+        logo.setBounds(750, 10, size.width, 50);
+        
+        panel.add(logo);
 
     }
 
