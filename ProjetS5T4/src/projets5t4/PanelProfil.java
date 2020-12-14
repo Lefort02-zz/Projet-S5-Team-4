@@ -25,14 +25,20 @@ import java.awt.font.TextAttribute;
 import java.io.File;
 import java.sql.Date;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -99,12 +105,19 @@ public class PanelProfil extends JFrame {
     private int numSecuDocTemp, colorX, colorY;
     private boolean researchRdv = false;
     private JButton cancelResearch;
-    
+
     private Patient p;
     private JFrame frameAnte = new JFrame();
     private JPanel panelAnte = new JPanel();
     private JTextField antnew;
     private JButton update = new JButton("Update");
+
+    private RDV rdvNew;
+    private JFrame popNewRdvFrame = new JFrame();
+    private JPanel panelNewRdv = new JPanel();
+    private JTextField raisonField;
+    private JButton validerButton = new JButton("Valider le rendez-vous");
+    private int row3, col3;
 
     public PanelProfil() throws HeadlessException {
     }
@@ -348,7 +361,7 @@ public class PanelProfil extends JFrame {
             addRdv.setBorderPainted(false);
             addRdv.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             addRdv.setFocusable(false);
-            
+
             cancelResearch.setBackground(new java.awt.Color(102, 102, 102));
             cancelResearch.setFont(new java.awt.Font("Arial", 0, 12));
             cancelResearch.setBorderPainted(false);
@@ -357,7 +370,7 @@ public class PanelProfil extends JFrame {
 
             size = addRdv.getSize();
             addRdv.setBounds(100 + insets.left, 300 + insets.top, 200, 30);
-            
+
             size = cancelResearch.getSize();
             cancelResearch.setBounds(100 + insets.left, 260 + insets.top, 250, 30);
             cancelResearch.setVisible(false);
@@ -380,9 +393,13 @@ public class PanelProfil extends JFrame {
             }
 
             addRdv.addActionListener(new ButtonListener());
-            
-           cancelResearch.addActionListener(new ButtonListener());
 
+            cancelResearch.addActionListener(new ButtonListener());
+
+        }
+
+        for (int i = 0; i < RdvList.size(); ++i) {
+            System.out.println(RdvList.get(i).getNumberRDV());
         }
 
     }
@@ -591,9 +608,10 @@ public class PanelProfil extends JFrame {
         tableau.setModel(model);
 
         displayEvent();
-        
-        if(researchRdv == true)
+
+        if (researchRdv == true) {
             newRdv();
+        }
 
     }
 
@@ -614,9 +632,10 @@ public class PanelProfil extends JFrame {
 
         tableau.setModel(model);
         displayEvent();
-        
-        if(researchRdv == true)
+
+        if (researchRdv == true) {
             newRdv();
+        }
 
     }
 
@@ -639,9 +658,10 @@ public class PanelProfil extends JFrame {
 
         tableau.setModel(model);
         displayEvent();
-        
-        if(researchRdv == true)
+
+        if (researchRdv == true) {
             newRdv();
+        }
 
     }
 
@@ -990,15 +1010,13 @@ public class PanelProfil extends JFrame {
         tableau.setShowVerticalLines(true);
 
         CustomRenderer r = new CustomRenderer();
-        
+
         TableColumnModel columnModel = tableau.getColumnModel();
         int cc = columnModel.getColumnCount();
         for (int c = 0; c < cc; c++) {
             TableColumn column = columnModel.getColumn(c);
             column.setCellRenderer(r);
         }
-        
-        
 
         for (int i = 0; i < listNewRdv.size(); ++i) {
 
@@ -1013,7 +1031,7 @@ public class PanelProfil extends JFrame {
 
                         colorX = k;
                         colorY = j;
-                        
+
                         r.setHighlighted(colorX, colorY, true);
 
                     }
@@ -1021,10 +1039,129 @@ public class PanelProfil extends JFrame {
                 }
             }
         }
-        
-        
-        
 
+    }
+
+    public void newRdvPopup(int row, int col) {
+
+        popNewRdvFrame = new JFrame("Nouveaux rendez-vous");
+
+        panelNewRdv.removeAll();
+
+        setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
+
+        JLabel Lnom = new JLabel();
+
+        JLabel Lprenom = new JLabel();
+
+        JLabel Lage = new JLabel();
+
+        JLabel Lraison = new JLabel("Raison du rendez-vous: ");
+        Lraison.setBounds(25, 200, 200, 30);
+
+        raisonField = new JTextField("raison");
+
+        JLabel Lsexe = new JLabel();
+
+        JLabel LnumRdv = new JLabel();
+
+        JLabel LnumSecu = new JLabel();
+        LnumSecu.setBounds(25, 300, 500, 30);
+
+        JLabel Ldate = new JLabel();
+        JLabel Lheure = new JLabel();
+
+        validerButton.setBounds(200, 450, 200, 30);
+        validerButton.addActionListener(new ButtonListener());
+
+        panelNewRdv.add(Lnom);
+        panelNewRdv.add(Lprenom);
+        panelNewRdv.add(Lage);
+        panelNewRdv.add(Lraison);
+        panelNewRdv.add(raisonField);
+        panelNewRdv.add(Lsexe);
+        panelNewRdv.add(LnumSecu);
+        panelNewRdv.add(Ldate);
+        panelNewRdv.add(Lheure);
+        panelNewRdv.add(LnumRdv);
+        panelNewRdv.add(validerButton);
+
+        validerButton.addActionListener(new ButtonListener());
+
+        panelNewRdv.setLayout(null);
+
+        popNewRdvFrame.add(panelNewRdv);
+        panelNewRdv.setVisible(true);
+
+        popNewRdvFrame.setSize(600, 550);
+        popNewRdvFrame.setLocationRelativeTo(null);
+        popNewRdvFrame.setVisible(true);
+
+        int intRdv = 0;
+        String newNumRdvString;
+
+        for (int k = 0; k < RdvList.size(); ++k) {
+            intRdv = Integer.parseInt(RdvList.get(k).getNumberRDV().substring(3));
+        }
+
+        intRdv += 1;
+
+        newNumRdvString = "RDV" + String.valueOf(intRdv);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d MMMM yyyy");
+        LocalDate dateTime = LocalDate.parse(days[col], formatter);
+        
+        System.out.println(dateTime);
+
+        Doctor d = new Doctor();
+
+        for (int l = 0; l < DoctorList.size(); ++l) {
+            if (numSecuDocTemp == DoctorList.get(l).getInsuranceNumber()) {
+                d = DoctorList.get(l);
+            }
+        }
+
+        for (int i = 0; i < PatientList.size(); ++i) {
+
+            if (PatientList.get(i).getInsuranceNumber() == numSécuPatient) {
+
+                LnumRdv.setText("Numéro de rendez-vous: " + newNumRdvString);
+                LnumRdv.setBounds(25, 0, 300, 30);
+
+                Lnom.setText("Last Name : " + PatientList.get(i).getLastName());
+                Lnom.setBounds(25, 50, 300, 30);
+
+                Lprenom.setText("Name : " + PatientList.get(i).getName());
+                Lprenom.setBounds(25, 100, 300, 30);
+
+                Lage.setText("Age : " + String.valueOf(PatientList.get(i).getBorn()) + " ans");
+                Lage.setBounds(25, 150, 300, 30);
+
+                Lsexe.setText("Sexe : " + PatientList.get(i).getSexe());
+                Lsexe.setBounds(25, 250, 300, 30);
+
+                raisonField.setBounds(155, 200, 400, 30);
+                
+
+                LnumSecu.setText("Insurance Number : " + String.valueOf(PatientList.get(i).getInsuranceNumber()));
+                LnumSecu.setBounds(25, 300, 500, 30);
+
+                Ldate.setText("Date: " + days[col]);
+                Ldate.setBounds(25, 350, 500, 30);
+
+                Lheure.setText("Heure: " + time[row]);
+                Lheure.setBounds(25, 400, 500, 30);
+                
+                
+                
+                String raison = raisonField.getText();
+                
+                System.out.println(raison);
+
+                rdvNew = new RDV(d, PatientList.get(i), Date.valueOf(dateTime), Time.valueOf(time[row]), raison, newNumRdvString);
+            }
+
+        }
     }
 
     private class CustomRenderer extends DefaultTableCellRenderer {
@@ -1231,7 +1368,7 @@ public class PanelProfil extends JFrame {
             if (e.getSource() == deleteAccount) {
 
                 int dialogButton = JOptionPane.YES_NO_OPTION;
-                int dialogResult = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimer votre conmpte ?", "Warning", dialogButton);
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimer votre compte ?", "Warning", dialogButton);
 
                 if (dialogResult == JOptionPane.YES_OPTION) {
 
@@ -1271,20 +1408,34 @@ public class PanelProfil extends JFrame {
 
             for (int i = 0; i < doctorItems.length; ++i) {
                 if (e.getSource() == speItems[i]) {
-                    
+
                     researchRdv = true;
                     cancelResearch.setVisible(true);
                     listNewRdv.clear();
                     numSecuDocTemp = DoctorList.get(i).getInsuranceNumber();
                     System.out.println("temp num " + numSecuDocTemp);
                     newRdv();
-
                 }
             }
-            
-            if(e.getSource() == cancelResearch)
-            {
+
+            if (e.getSource() == cancelResearch) {
+                panel.repaint();
                 researchRdv = false;
+                displayEvent();
+                cancelResearch.setVisible(false);
+                
+            }
+
+            if (e.getSource() == validerButton) {
+                rdvDao.create(rdvNew);
+                
+                panel.repaint();
+                researchRdv = false;
+                cancelResearch.setVisible(false);
+                
+                displayEvent();
+                popNewRdvFrame.dispose();
+                JOptionPane.showMessageDialog(null, "Le rendez-vous a bien été ajouté à votre emploi du temps");
             }
 
         }
@@ -1333,12 +1484,27 @@ public class PanelProfil extends JFrame {
 
             col = tableau.columnAtPoint(e.getPoint());
 
-            if (e.getClickCount() == 1) {
-                quickInfo(row, col);
-            }
+            if (researchRdv == false) {
+                if (e.getClickCount() == 1) {
+                    quickInfo(row, col);
+                }
 
-            if (e.getClickCount() == 2) {
-                infoPanel(row, col);
+                if (e.getClickCount() == 2) {
+                    infoPanel(row, col);
+                }
+            }
+            if (researchRdv == true) {
+
+                TableCellRenderer renderer = tableau.getCellRenderer(row, col);
+                Component c = tableau.prepareRenderer(renderer, row, col);
+                System.out.println(c.getBackground());
+
+                if (c.getBackground() == Color.RED) {
+                    JOptionPane.showMessageDialog(null, "Impossible de réserver un rendez-vous sur ce créneau horaire !");
+                }
+                if (c.getBackground() == Color.GREEN) {
+                    newRdvPopup(row, col);
+                }
             }
 
         }
