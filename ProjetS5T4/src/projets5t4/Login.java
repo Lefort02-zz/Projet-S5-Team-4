@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 
 import projets5t4.PanelSignUp.ButtonListener;
@@ -103,7 +104,7 @@ public class Login extends javax.swing.JFrame {
                         }
 
                     } else {
-                        System.out.println("This id or the password isn't correct.");
+                    	JOptionPane.showMessageDialog(null, "This id or the password isn't correct.");
                     }
                 }
 
@@ -121,11 +122,11 @@ public class Login extends javax.swing.JFrame {
                         }
 
                     } else {
-                        System.out.println("This id or the password isn't correct.");
+                        JOptionPane.showMessageDialog(null, "This id or the password isn't correct.");
                     }
                 }
             } catch (Exception exp) {
-                System.out.println(exp.toString());
+            	JOptionPane.showMessageDialog(null, "This id or the password isn't correct.");
             }
         }
     }

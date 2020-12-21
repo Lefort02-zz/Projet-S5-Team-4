@@ -9,7 +9,7 @@ package projets5t4;
  *
  * @author Gaspard Lefort-Louet
  */
-public class Doctor extends Person {
+public class Doctor extends Person {  //création d'un docteur
 
     private String speciality;
 

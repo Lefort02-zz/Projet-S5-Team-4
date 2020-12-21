@@ -23,9 +23,7 @@ public class RdvPopUp extends JFrame  {
 	
 	public void init(Patient p)
 	{
-		
-		
-		
+	
 	JFrame frameRdvPopUp = new JFrame("RDV POPup");
 	
 	JLabel numRdv = new JLabel("Numéro de Rendez-vous : " );
@@ -46,7 +44,7 @@ public class RdvPopUp extends JFrame  {
 	JLabel sexe = new JLabel("Sexe : " + p.getSexe());
 	sexe.setBounds(25, 300, 100, 30);
 	
-	JLabel date = new JLabel("Date : " + );
+	JLabel date = new JLabel("Date : ");
 	date.setBounds(25, 350, 100, 30);
 	
 	JLabel horaire = new JLabel("Horaire : ");
@@ -77,7 +75,7 @@ public class RdvPopUp extends JFrame  {
 	public static void main(String[]args)
 	{
 		RdvPopUp test = new RdvPopUp();
-		test.init();
+		//test.init();
 	}
 	
 }

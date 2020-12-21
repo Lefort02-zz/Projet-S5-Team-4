@@ -16,14 +16,14 @@ import java.util.List;
  *
  * @author Gaspard Lefort-Louet
  */
-public class RDVDAO extends DAO<RDV> {
+public class RDVDAO extends DAO<RDV> { //Hérite de la classe DAO
 
     public RDVDAO(Connection conn) {
         super(conn);
     }
 
     @Override
-    public void create(RDV obj) {
+    public void create(RDV obj) { ///ajoute un rdv à la base de donnée
 
         try {
 
@@ -51,7 +51,7 @@ public class RDVDAO extends DAO<RDV> {
     }
 
     @Override
-    public void delete(String numRdv) {
+    public void delete(String numRdv) {  //Supprime un rdv dans la base de donnée
         
           try {
 
@@ -74,7 +74,7 @@ public class RDVDAO extends DAO<RDV> {
     }
 
     @Override
-    public List<RDV> find() {
+    public List<RDV> find() {  //récupération des rdv de la base de donnée
 
         List<RDV> RDVList = new ArrayList<RDV>();
 

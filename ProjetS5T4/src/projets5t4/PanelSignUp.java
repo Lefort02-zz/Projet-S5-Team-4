@@ -35,7 +35,7 @@ public class PanelSignUp
 
     public class CheckBoxListener implements ItemListener
     {
-    	public void itemStateChanged(ItemEvent e)
+    	public void itemStateChanged(ItemEvent e)//differencie les hommes des femmes ainsi que les docteurs et les patients
     	{
 
     		if(sexe.isSelected())
@@ -65,7 +65,7 @@ public class PanelSignUp
     	}
     }
 
-    public class ButtonListener implements ActionListener
+    public class ButtonListener implements ActionListener//enregistre le nouveau compte utilisateur en fonction des saisies
     {
 	    public void  actionPerformed(ActionEvent e)
 	    {
@@ -113,7 +113,7 @@ public class PanelSignUp
     }
 
 
-    public boolean insuranceVerification()
+    public boolean insuranceVerification()//verifie l'existance du numero de secu dans la base de donnée
     {
     	boolean verification = false;
 
@@ -167,7 +167,7 @@ public class PanelSignUp
 	    	}
     }
 
-	 public boolean init()
+	 public boolean init()//initialise le gui
 	 {
 		 boolean typeVerification = false;
 
@@ -227,12 +227,6 @@ public class PanelSignUp
 	    return typeVerification;
 	 }
 
-	 public static void main(String[]args)
-	 {
-		 PanelSignUp ps1 = new PanelSignUp();
-		 ps1.init();
-
-	 }
 
 
 }

@@ -21,15 +21,15 @@ public abstract class DAO<T> {
         }
         
 
-        public abstract void create(T obj);
+        public abstract void create(T obj);  //création d'un objet dans la base de donnée
   
-        public abstract void delete(int numSécu);
+        public abstract void delete(int numSécu); //suppression d'un élè_ment de la base de donnée par rapport à un int
         
-        public abstract void delete(String numRdv);
+        public abstract void delete(String numRdv);  //suppression d'un élè_ment de la base de donnée par rapport à un String
   
-        public abstract boolean update(T obj, String S);
+        public abstract boolean update(T obj, String S);  //Mise à jour d'une ligne de la base de donnée
 
-        public abstract List<T> find();
+        public abstract List<T> find();  //Récupération de toutes les informations de la base de donnée
         
     
 }

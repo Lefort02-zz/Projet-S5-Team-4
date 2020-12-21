@@ -11,7 +11,7 @@ package projets5t4;
  */
 import java.sql.Date;
 
-public class Patient extends Person {
+public class Patient extends Person {  //Création d'un patient
 
     private String antecedent;
 

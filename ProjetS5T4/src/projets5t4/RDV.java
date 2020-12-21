@@ -8,7 +8,7 @@ package projets5t4;
 import java.sql.Date;
 import java.sql.Time;
 
-public class RDV {
+public class RDV {  //Classe permettant de créerun RDV
 
     private String numberRDV;
     private Doctor doctor;

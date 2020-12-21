@@ -17,19 +17,19 @@ import java.util.ArrayList;
  *
  * @author Gaspard Lefort-Louet
  */
-public class DocteurDAO extends DAO<Doctor> {
+public class DocteurDAO extends DAO<Doctor> {  ///Hérite de la classe DAO
 
     public DocteurDAO(Connection conn) {
         super(conn);
     }
 
     @Override
-    public void create(Doctor obj) {
+    public void create(Doctor obj) {   //Création d'un docteur dans la base de donnée
 
         try {
 
-            String sql = "INSERT INTO docteur (numSécuDocteur, nom, prénom, age, spécialité, mdp, sexe) VALUES (?,?,?,?,?,?,?)";
-            PreparedStatement statementDoctor = this.connect.prepareStatement(sql);
+            String sql = "INSERT INTO docteur (numSécuDocteur, nom, prénom, age, spécialité, mdp, sexe) VALUES (?,?,?,?,?,?,?)"; //Commande SQL
+            PreparedStatement statementDoctor = this.connect.prepareStatement(sql); //Ecrit dans la base de donnée à chaque colonne
             statementDoctor.setInt(1, obj.getInsuranceNumber());
             statementDoctor.setString(2, obj.getLastName());
             statementDoctor.setString(3, obj.getName());
@@ -54,14 +54,14 @@ public class DocteurDAO extends DAO<Doctor> {
     }
 
     @Override
-    public void delete(int numSecu) {
-
+    public void delete(int numSecu) {  ///Supprime un docteur dans la base de donnée
+ 
         try {
 
             Statement stmt = this.connect.createStatement();
 
-            stmt.execute("DELETE FROM docteur WHERE numS�cuDocteur =" + numSecu);
-            stmt.execute("DELETE FROM rdv WHERE numS�cuDocteur =" + numSecu);
+            stmt.execute("DELETE FROM docteur WHERE numSécuDocteur =" + numSecu);  //Commande SQL de suppression
+            stmt.execute("DELETE FROM rdv WHERE numSécuDocteur =" + numSecu);
 
             stmt.close();
 
@@ -80,9 +80,9 @@ public class DocteurDAO extends DAO<Doctor> {
     }
 
     @Override
-    public List<Doctor> find() {
+    public List<Doctor> find() {  ///Récupère tout les docteurs de la base de donnée
 
-        List<Doctor> DoctorList = new ArrayList<Doctor>();
+        List<Doctor> DoctorList = new ArrayList<Doctor>();  ///Création d'une arrauList de docteur
 
         try {
             ResultSet rs = this.connect.createStatement(
@@ -91,16 +91,16 @@ public class DocteurDAO extends DAO<Doctor> {
             ).executeQuery(
                     "SELECT * FROM docteur"
             );
-            while (rs.next()) {
+            while (rs.next()) {  
                 Doctor doc = new Doctor(rs.getString(2), rs.getString(3), rs.getInt(1), rs.getInt(4), rs.getString(6), rs.getString(5), rs.getString(7));
-                DoctorList.add(doc);
+                DoctorList.add(doc);  //Ajoute chaque docteur de la base de donnée à l'arraylist
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return DoctorList;
+        return DoctorList;  //Return la liste de docteur
     }
 
     @Override

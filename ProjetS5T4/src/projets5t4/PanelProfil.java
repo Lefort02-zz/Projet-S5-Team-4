@@ -46,7 +46,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import org.jfree.ui.RefineryUtilities;
 
-
 public class PanelProfil extends JFrame {
 
     private JTable tableau;
@@ -123,7 +122,6 @@ public class PanelProfil extends JFrame {
     private JFrame popNewRdvFrame = new JFrame();
     private JPanel panelNewRdv = new JPanel();
 
-
     private int row3, col3;
 
     private JLabel logo;
@@ -158,9 +156,9 @@ public class PanelProfil extends JFrame {
         setVisible(true);
     }
 
-    private void buildPanel() {
+    private void buildPanel() {//initialisation GUI
 
-        panel = new JPanel();
+        panel = new JPanel();//creating, positioning and coloring the components
         panel.setBackground(new java.awt.Color(218, 227, 230));
 
         hours = new JList(time);
@@ -422,7 +420,7 @@ public class PanelProfil extends JFrame {
             System.out.println(RdvList.get(i).getNumberRDV());
         }
 
-        logo = new JLabel();
+        logo = new JLabel();//initialization of a picture
 
         logo.setIcon(new javax.swing.ImageIcon("C:\\Users\\Gaspard Lefort-Louet\\iCloudDrive\\Desktop\\Github\\Projet-S5-Team-4\\ProjetS5T4\\src\\projets5t4\\logo 2.jpg")); // NOI18N
 
@@ -433,7 +431,7 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public void infoPanel(int row, int col) {
+    public void infoPanel(int row, int col) {//affiche les informations du rdv selectionné dans une fenetre
 
         frame = new JFrame("Information sur votre rendez-vous");
         frame.setSize(600, 500);
@@ -571,7 +569,7 @@ public class PanelProfil extends JFrame {
 
             }
 
-            if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) { //Affiche les informations si la personne connecté est un patient
+            if (numSécuDocteur == 0 && RdvList.get(i).getPatient().insuranceNumber == numSécuPatient) { //Affiche les informations si la personne connectée est un patient
 
                 if (RdvList.get(i).getNumberRDV() == tableau.getValueAt(row, col).toString()) {
 
@@ -621,7 +619,7 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public void setNextWeek() {
+    public void setNextWeek() { //permet de passer à la semaine suivante dans le tableau
 
         int delta = -calendar.get(GregorianCalendar.DAY_OF_WEEK) + 2;
 
@@ -646,7 +644,7 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public void setPreviousWeek() {
+    public void setPreviousWeek() {//permet de passer à la semaine précedente dans le tableau
 
         int delta = -calendar.get(GregorianCalendar.DAY_OF_WEEK) + 2;
 
@@ -670,7 +668,7 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public void setActualWeek() {
+    public void setActualWeek() {//permet de revenir à la semaine actuelle dans le tableau
 
         calendar = Calendar.getInstance();
 
@@ -696,7 +694,7 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public void colorActualDay() {
+    public void colorActualDay() {//permet de grisé le jour actuel
         /*
         String date;
 
@@ -716,7 +714,7 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public void displayEvent() {
+    public void displayEvent() {//affichage des rdv dans le tableau
 
         DoctorList = docteurDAO.find();
 
@@ -766,11 +764,11 @@ public class PanelProfil extends JFrame {
         }
     }
 
-    public void displayWelcome() {
+    public void displayWelcome() {//Affichage en haut de l'ecran des informations utilisateur
 
         JLabel welcome = new JLabel();
 
-        if (numSécuPatient == 0) {
+        if (numSécuPatient == 0) {//patient
             for (int i = 0; i < DoctorList.size(); ++i) {
 
                 if (DoctorList.get(i).insuranceNumber == numSécuDocteur) {  //Si la personne connecté est un docteur
@@ -782,7 +780,7 @@ public class PanelProfil extends JFrame {
 
         }
 
-        if (numSécuDocteur == 0) {
+        if (numSécuDocteur == 0) {//docteur
             for (int i = 0; i < PatientList.size(); ++i) {
 
                 if (PatientList.get(i).insuranceNumber == numSécuPatient) {  //Si la personne connecté est un patient
@@ -804,7 +802,7 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public void quickInfo(int row, int col) {
+    public void quickInfo(int row, int col) {//Affiche de brefs informations sur le rdv selectionné sur la droite du tableau
 
         String informations;
 
@@ -861,7 +859,7 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public void profilePopup() {
+    public void profilePopup() {//permet d'avoir les informations completes de l'utilisateur dans une nouvelle fenetre
         frame = new JFrame("Profile");
         frame.setSize(600, 500);
         frame.setLocationRelativeTo(null);
@@ -1016,7 +1014,7 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public void newRdv() {
+    public void newRdv() {//permet de colorer les cellules en fonction de la disponibilité des docteurs (rouge = indisponible / vert = disponible)
 
         String rdvImpString;
         int horaire;
@@ -1074,44 +1072,35 @@ public class PanelProfil extends JFrame {
 
     }
 
-    public void newRdvPopup(int row, int col) {
+    public void newRdvPopup(int row, int col) {//permet d'ajouter un nouveau rendez vous, en selectionnant une cellule dans le tableau
 
-    	panelNewRdv.removeAll();
+        panelNewRdv.removeAll();
         popNewRdvFrame = new JFrame("Nouveaux rendez-vous");
 
         setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 
-
-
         int intRdv = 0;
-        int intfinal =0;
+        int intfinal = 0;
 
+        for (int k = 0; k < RdvList.size(); ++k) {
+            intRdv = Integer.parseInt(RdvList.get(k).getNumberRDV().substring(3));
 
-	        for (int k = 0; k < RdvList.size(); ++k)
-	        {
-	            intRdv = Integer.parseInt(RdvList.get(k).getNumberRDV().substring(3));
-
-	            if(intRdv > intfinal)
-	            	intfinal=intRdv;
-	        }
-
-       intfinal++;
-
-        newNumRdvString = "RDV" + String.valueOf(intfinal);
-
-
-
-        for (int i = 0; i < PatientList.size(); ++i)
-        {
-
-            if (PatientList.get(i).getInsuranceNumber() == numSécuPatient)
-            {
-
-            	pat = PatientList.get(i);
+            if (intRdv > intfinal) {
+                intfinal = intRdv;
             }
         }
 
+        intfinal++;
 
+        newNumRdvString = "RDV" + String.valueOf(intfinal);
+
+        for (int i = 0; i < PatientList.size(); ++i) {
+
+            if (PatientList.get(i).getInsuranceNumber() == numSécuPatient) {
+
+                pat = PatientList.get(i);
+            }
+        }
 
         JLabel Lnom = new JLabel("Last Name : " + pat.getLastName());
         Lnom.setBounds(25, 50, 300, 30);
@@ -1135,11 +1124,12 @@ public class PanelProfil extends JFrame {
         Ldate.setBounds(25, 450, 500, 30);
         JLabel Lheure = new JLabel("Heure: " + time[row]);
         Lheure.setBounds(25, 500, 500, 30);
+        
+        dateRDV = LocalDate.parse(days[col], formatter); 
 
         JButton validerButton = new JButton("Valider le rendez-vous");
         validerButton.setBounds(25, 550, 200, 30);
         validerButton.addActionListener(new ButtonListener1());
-
 
         popNewRdvFrame.add(Lnom);
         popNewRdvFrame.add(Lprenom);
@@ -1158,50 +1148,20 @@ public class PanelProfil extends JFrame {
         popNewRdvFrame.setLocationRelativeTo(null);
         popNewRdvFrame.setVisible(true);
 
-        for (int l = 0; l < DoctorList.size(); ++l)
-        {
-            if (numSecuDocTemp == DoctorList.get(l).getInsuranceNumber())
-            {
+        for (int l = 0; l < DoctorList.size(); ++l) {
+            if (numSecuDocTemp == DoctorList.get(l).getInsuranceNumber()) {
                 d = DoctorList.get(l);
             }
         }
 
+    }
 
-        raisonRDV = raisonField.getText();
-        dateRDV = LocalDate.parse(days[col], formatter);
-
-                LnumRdv.setText("Numéro de rendez-vous: " + newNumRdvString);
-                LnumRdv.setBounds(25, 0, 300, 30);
-
-                Lnom.setText("Last Name : " + PatientList.get(i).getLastName());
-                Lnom.setBounds(25, 50, 300, 30);
-
-                Lprenom.setText("Name : " + PatientList.get(i).getName());
-                Lprenom.setBounds(25, 100, 300, 30);
-
-                Lage.setText("Age : " + String.valueOf(PatientList.get(i).getBorn()) + " ans");
-                Lage.setBounds(25, 150, 300, 30);
-
-                Lsexe.setText("Sexe : " + PatientList.get(i).getSexe());
-                Lsexe.setBounds(25, 250, 300, 30);
-
-                raisonField.setBounds(155, 200, 400, 30);
-
-                LnumSecu.setText("Insurance Number : " + String.valueOf(PatientList.get(i).getInsuranceNumber()));
-                LnumSecu.setBounds(25, 300, 500, 30);
-
-                Ldate.setText("Date: " + days[col]);
-                Ldate.setBounds(25, 350, 500, 30);
-
-                Lheure.setText("Heure: " + time[row]);
-                Lheure.setBounds(25, 400, 500, 30);
-
-                String raison = raisonField.getText();
+    private class ButtonListener1 implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {//ajoute à la base de donnée le nouveau rdv en utilisant le dao rdv
 
-        	rdvDao.create(new RDV(d, pat, Date.valueOf(dateRDV), Time.valueOf(time[row]), String.valueOf(raisonField.getText()), newNumRdvString));
+            rdvDao.create(new RDV(d, pat, Date.valueOf(dateRDV), Time.valueOf(time[row]), String.valueOf(raisonField.getText()), newNumRdvString));
 
             panel.repaint();
             researchRdv = false;
@@ -1209,12 +1169,12 @@ public class PanelProfil extends JFrame {
 
             displayEvent();
             popNewRdvFrame.dispose();
-            JOptionPane.showMessageDialog(null,"Le rendez-vous a bien été ajouté à votre emploi du temps");
+            JOptionPane.showMessageDialog(null, "Le rendez-vous a bien été ajouté à votre emploi du temps");
 
         }
-        }
+    }
 
-    private class CustomRenderer extends DefaultTableCellRenderer {
+    private class CustomRenderer extends DefaultTableCellRenderer {//permet de colorer une cellule cible
 
         private final Set<Point> highlightedCells = new HashSet<Point>();
 
@@ -1240,9 +1200,10 @@ public class PanelProfil extends JFrame {
             }
             return this;
         }
+
     }
 
-    public void patientUpdate(int row, int col) {
+    public void patientUpdate(int row, int col) {//permet de modifier les antecedents d'un patient en tant que docteur
 
         frameAnte = new JFrame("PatientUpdate");
 
@@ -1376,9 +1337,7 @@ public class PanelProfil extends JFrame {
         }
     }
 
-
-
-    private class ButtonListener implements ActionListener {
+    private class ButtonListener implements ActionListener {//ajoute des actions aux boutons du programme
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -1489,12 +1448,10 @@ public class PanelProfil extends JFrame {
 
             }
 
-
-
         }
     }
 
-    private class Mouse1 implements MouseListener {
+    private class Mouse1 implements MouseListener {//ajoute une action en fonction des interactions souris
 
         @Override
         public void mouseClicked(MouseEvent e) {

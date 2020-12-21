@@ -20,9 +20,9 @@ public class SQL {
     {
         try {
             
-            String url = "jdbc:mysql://127.0.0.1:3306/projetteam4";
+            String url = "jdbc:mysql://127.0.0.1:3306/projets5?useSSL=false";
             String user = "root";
-            String password = "Augustin01";
+            String password = "Lagardere1202";
             
             conn=DriverManager.getConnection(url, user, password);
             
